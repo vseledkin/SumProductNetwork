@@ -20,6 +20,7 @@ ImagePGM::ImagePGM(vector<vector <double> >& buff){
 
 void ImagePGM::writeImage(string pathName){
 
+
 	FILE * grey = fopen(pathName.c_str(), "w");
 
 	fprintf(grey, "P2\n%d %d\n255\n", width, height);

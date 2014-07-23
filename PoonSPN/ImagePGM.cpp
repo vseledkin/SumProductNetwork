@@ -36,3 +36,4 @@ void ImagePGM::writeImage(string pathName){
 
 }
 
+

@@ -14,6 +14,7 @@ Stores variables and process arguments
 
 using namespace std;
 
+
 class PoonParameter {
 public:
 	int maxIter_;

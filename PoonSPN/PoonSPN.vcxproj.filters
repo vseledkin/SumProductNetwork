@@ -77,9 +77,6 @@
     <ClCompile Include="PoonSPN.cpp">
       <Filter>Source Files\Poon</Filter>
     </ClCompile>
-    <ClCompile Include="PoonSumNode.cpp">
-      <Filter>Source Files\Poon</Filter>
-    </ClCompile>
     <ClCompile Include="PoonRegion.cpp">
       <Filter>Source Files\Poon</Filter>
     </ClCompile>

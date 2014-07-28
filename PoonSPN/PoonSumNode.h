@@ -1,5 +1,7 @@
 #pragma once
-class PoonSumNode
+#include "PoonNode"
+
+class PoonSumNode : public PoonNode
 {
 public:
 	PoonSumNode();

@@ -1,24 +1,24 @@
-#pragma once
+
 
 #include <limits>  
 #include <math.h> 
+
 //an abstract node class
 class PoonNode
 {
-
-	double ZERO_LOGVAL_;
-
+public:
+	const double ZERO_LOGVAL_ = std::numeric_limits<double>::min(); //negative infinity
+protected:
 	double logval_;
 	double logDerivative_;
 
 public:
 	PoonNode(){
-		ZERO_LOGVAL_ = -std::numeric_limits<double>::infinity(); //negative infinity
 		logDerivative_ = ZERO_LOGVAL_;
 	};
 	~PoonNode();
 
-	double getLogVal() { return logval_; };
+	double getLogVal() { return logval_; }; //naming is bad getLogVal vs setVal
 	void setVal(double v) { 
 		if (v == 0){
 			logval_ = ZERO_LOGVAL_;

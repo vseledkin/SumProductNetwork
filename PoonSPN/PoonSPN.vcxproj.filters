@@ -39,11 +39,26 @@
     <ClInclude Include="PoonDataset.h">
       <Filter>Header Files\Poon</Filter>
     </ClInclude>
-    <ClInclude Include="PoonInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ImagePGM.h">
       <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="PoonSPN.h">
+      <Filter>Header Files\Poon</Filter>
+    </ClInclude>
+    <ClInclude Include="PoonInstance.h">
+      <Filter>Header Files\Poon</Filter>
+    </ClInclude>
+    <ClInclude Include="PoonNode.h">
+      <Filter>Header Files\Poon</Filter>
+    </ClInclude>
+    <ClInclude Include="PoonProdNode.h">
+      <Filter>Header Files\Poon</Filter>
+    </ClInclude>
+    <ClInclude Include="PoonRegion.h">
+      <Filter>Header Files\Poon</Filter>
+    </ClInclude>
+    <ClInclude Include="PoonSumNode.h">
+      <Filter>Header Files\Poon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +73,21 @@
     </ClCompile>
     <ClCompile Include="ImagePGM.cpp">
       <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="PoonSPN.cpp">
+      <Filter>Source Files\Poon</Filter>
+    </ClCompile>
+    <ClCompile Include="PoonSumNode.cpp">
+      <Filter>Source Files\Poon</Filter>
+    </ClCompile>
+    <ClCompile Include="PoonRegion.cpp">
+      <Filter>Source Files\Poon</Filter>
+    </ClCompile>
+    <ClCompile Include="PoonProdNode.cpp">
+      <Filter>Source Files\Poon</Filter>
+    </ClCompile>
+    <ClCompile Include="PoonNode.cpp">
+      <Filter>Source Files\Poon</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

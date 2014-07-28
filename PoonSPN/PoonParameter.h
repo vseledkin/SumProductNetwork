@@ -2,6 +2,9 @@
 Like Poon's "Parameter" class
 
 Stores variables and process arguments
+
+This should be a singleton.  The reasoning is that it will be inconviente to make fast changes if I have to pass parmaters or a param object around all the time.
+I should pass it into the main class though and try to pass it through as much as possible.
 */
 
 #ifndef POONPARAMETER_H

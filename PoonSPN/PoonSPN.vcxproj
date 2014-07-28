@@ -82,14 +82,24 @@
     <ClInclude Include="ImagePGM.h" />
     <ClInclude Include="PoonDataset.h" />
     <ClInclude Include="PoonInstance.h" />
+    <ClInclude Include="PoonNode.h" />
     <ClInclude Include="PoonParameter.h" />
+    <ClInclude Include="PoonProdNode.h" />
+    <ClInclude Include="PoonRegion.h" />
     <ClInclude Include="PoonRun.h" />
+    <ClInclude Include="PoonSPN.h" />
+    <ClInclude Include="PoonSumNode.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImagePGM.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PoonDataset.cpp" />
+    <ClCompile Include="PoonNode.cpp" />
+    <ClCompile Include="PoonProdNode.cpp" />
+    <ClCompile Include="PoonRegion.cpp" />
     <ClCompile Include="PoonRun.cpp" />
+    <ClCompile Include="PoonSPN.cpp" />
+    <ClCompile Include="PoonSumNode.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

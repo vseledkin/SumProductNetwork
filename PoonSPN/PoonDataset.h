@@ -31,6 +31,7 @@ public:
 	};*/
 	
 private:
+	//note that these should be wrapped into their own class so I can overload get instance
 	vector<PoonInstance> train_;
 	vector<PoonInstance> test_;
 

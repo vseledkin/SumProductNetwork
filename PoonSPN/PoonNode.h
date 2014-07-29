@@ -19,6 +19,7 @@ public:
 	~PoonNode();
 
 	double getLogVal() { return logval_; }; //naming is bad getLogVal vs setVal
+	double getLogDerVal() { return logDerivative_; }; //naming is bad getLogVal vs setVal
 	void setVal(double v) { 
 		if (v == 0){
 			logval_ = ZERO_LOGVAL_;
@@ -27,6 +28,7 @@ public:
 			logval_ = log(v);
 		}
 	};
+	void setLogDerVal(double v){ logDerivative_ = v; };
 
 	// evaluate root
 	virtual void eval() = 0;

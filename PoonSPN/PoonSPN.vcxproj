@@ -89,6 +89,7 @@
     <ClInclude Include="PoonRun.h" />
     <ClInclude Include="PoonSPN.h" />
     <ClInclude Include="PoonSumNode.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImagePGM.cpp" />
@@ -99,6 +100,7 @@
     <ClCompile Include="PoonRegion.cpp" />
     <ClCompile Include="PoonRun.cpp" />
     <ClCompile Include="PoonSPN.cpp" />
+    <ClCompile Include="PoonSumNode.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

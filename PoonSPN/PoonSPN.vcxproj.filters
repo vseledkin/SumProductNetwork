@@ -60,6 +60,9 @@
     <ClInclude Include="PoonSumNode.h">
       <Filter>Header Files\Poon</Filter>
     </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files\Poon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PoonRun.cpp">
@@ -84,6 +87,9 @@
       <Filter>Source Files\Poon</Filter>
     </ClCompile>
     <ClCompile Include="PoonNode.cpp">
+      <Filter>Source Files\Poon</Filter>
+    </ClCompile>
+    <ClCompile Include="PoonSumNode.cpp">
       <Filter>Source Files\Poon</Filter>
     </ClCompile>
   </ItemGroup>

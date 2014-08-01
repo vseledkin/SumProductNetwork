@@ -98,6 +98,7 @@
     <ClCompile Include="PoonDataset.cpp" />
     <ClCompile Include="PoonDecomposition.cpp" />
     <ClCompile Include="PoonNode.cpp" />
+    <ClCompile Include="PoonParameter.cpp" />
     <ClCompile Include="PoonProdNode.cpp" />
     <ClCompile Include="PoonRegion.cpp" />
     <ClCompile Include="PoonRun.cpp" />

@@ -98,5 +98,8 @@
     <ClCompile Include="PoonDecomposition.cpp">
       <Filter>Source Files\Poon</Filter>
     </ClCompile>
+    <ClCompile Include="PoonParameter.cpp">
+      <Filter>Source Files\Poon</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

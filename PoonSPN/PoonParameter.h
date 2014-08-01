@@ -49,12 +49,13 @@ public:
 	// buffer
 	static const int buf_idx_ = 0;
 	static const int buf_size_ = 10000000;
-	static const int buf_size_doubl_ = 100;
-	static std::vector<int> buf_int_; = new int[buf_size_];
-	static std::vector<double> buf_double_ = new double[100];
+	static const int buf_size_double_ = 100;
+	static std::vector<int> buf_int_;  //instantiation in cpp
+	static std::vector<double> buf_double_;  //instantiation in cpp
 	static std::string buf_char_;
 
 	// MPI util
+	/*
 	static double recvDouble(int src, int tag) {
 		MPI.COMM_WORLD.Recv(MyMPI.buf_double_, 0, 1, MPI.DOUBLE, src, tag);
 		return MyMPI.buf_double_[0];
@@ -63,14 +64,14 @@ public:
 		MyMPI.buf_double_[0] = d;
 		MPI.COMM_WORLD.Send(MyMPI.buf_double_, 0, 1, MPI.DOUBLE, dest, tag);
 	}
-	tatic char recvChar(int src, int tag) {
+	static char recvChar(int src, int tag) {
 		MPI.COMM_WORLD.Recv(MyMPI.buf_char_, 0, 1, MPI.CHAR, src, tag);
 		return MyMPI.buf_char_[0];
 	}
 	static void sendChar(int dest, int tag, char c) {
 		MyMPI.buf_char_[0] = c;
 		MPI.COMM_WORLD.Send(MyMPI.buf_char_, 0, 1, MPI.CHAR, dest, tag);
-	}
+	}*/
 
 public:
 	//singleton

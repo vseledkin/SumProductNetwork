@@ -1,5 +1,7 @@
 
 #include "PoonRegion.h"
+#include "PoonDecomposition.h"
+
 #include <random>
 
 
@@ -164,124 +166,136 @@ void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, PoonParame
 			defMapDecompOpts.clear();
 		}
 		if (lp == defMapProdPrb_) {
-			string di = Decomposition.getIdStr(ri1, ri2, r1.defMapTypeIdx_, r2.defMapTypeIdx_);
-			defMapDecompOpts.add(di);
+			string di = PoonDecomposition::getIdStr(ri1, ri2, r1.defMapTypeIdx_, r2.defMapTypeIdx_);
+			defMapDecompOpts.push_back(di);
 		}
 	}
 	for (int i = b1_ + interval_; i<b2_; i += interval_) {
-		int ri1 = Region.getRegionId(a1_, a2_, b1_, i);
-		int ri2 = Region.getRegionId(a1_, a2_, i, b2_);
-		Region r1 = Region.getRegion(ri1);
-		Region r2 = Region.getRegion(ri2);
+		int ri1 = getRegionId(a1_, a2_, b1_, i, params);
+		int ri2 = getRegionId(a1_, a2_, i, b2_, params);
+		PoonRegion r1 = getRegion(ri1, params);
+		PoonRegion r2 = getRegion(ri2, params);
 
-		SumNode n1 = r1.types_.get(r1.defMapTypeIdx_);
-		SumNode n2 = r2.types_.get(r2.defMapTypeIdx_);
+		PoonSumNode n1 = r1.types_.at(r1.defMapTypeIdx_);
+		PoonSumNode n2 = r2.types_.at(r2.defMapTypeIdx_);
 		double lp;
-		if (n1.logval_ == Node.ZERO_LOGVAL_ || n2.logval_ == Node.ZERO_LOGVAL_)
-			lp = Node.ZERO_LOGVAL_;
+		if (n1.getLogVal() == n1.ZERO_LOGVAL_ || n2.getLogVal() == n2.ZERO_LOGVAL_)
+			lp = n1.ZERO_LOGVAL_;
 		else
-			lp = n1.logval_ + n2.logval_;
+			lp = n1.getLogVal() + n2.getLogVal();
 
-		if (defMapDecompOpts.isEmpty() || lp>defMapProdPrb_) {
+		if (defMapDecompOpts.empty() || lp > defMapProdPrb_) {
 			defMapProdPrb_ = lp;
 			defMapDecompOpts.clear();
 		}
 		if (lp == defMapProdPrb_) {
-			String di = Decomposition.getIdStr(ri1, ri2, r1.defMapTypeIdx_, r2.defMapTypeIdx_);
-			defMapDecompOpts.add(di);
+			string di = PoonDecomposition::getIdStr(ri1, ri2, r1.defMapTypeIdx_, r2.defMapTypeIdx_);
+			defMapDecompOpts.push_back(di);
 		}
 	}
 
 	// random break ties for a previously unused node
-	defMapDecomp = defMapDecompOpts.get(Utils.random_.nextInt(defMapDecompOpts.size()));
+	std::default_random_engine generator;
+	std::uniform_int_distribution<int> distribution(0, blanks.size());
+
+	defMapDecomp = defMapDecompOpts.at(distribution(generator));
 	defMapDecompOpts.clear();
 
 	// evaluate product nodes
-	for (String di : decomp_prod_.keySet()) {
-		ProdNode n = decomp_prod_.get(di);
+	for (auto& kv : decomp_prod_) {
+		PoonProdNode n = decomp_prod_.at(kv.first);  //could just kv.second.eval();
 		n.eval();
 	}
 
 	// evaluate existing sum nodes and children
-	ArrayList<Integer> mapTypes = new ArrayList<Integer>();
-	for (int ti = 0; ti<types_.size(); ti++) {
-		if (types_.get(ti).chds_.size() == 0) continue;
-		SumNode n = types_.get(ti);
+	vector<int> mapTypes;
+	for (int ti = 0; ti < types_.size(); ti++) {
+		if (types_.at(ti).chds_.size() == 0) 
+			continue;
+		PoonSumNode n = types_.at(ti);
 		n.eval();
 
 		double maxSumPrb = 0;
-		ArrayList<String> mapDecompOpt = new ArrayList<String>();
+		vector<string> mapDecompOpt;
 
-		for (String di : n.chds_.keySet()) {
-			Node c = n.chds_.get(di);
-			double l = n.logval_ + Math.log(n.cnt_);
-			double m = c.logval_;
+		for (auto& kv : n.chds_) {
+			string di = kv.first;
+			PoonNode& c = n.chds_.at(di);
+			double l = n.getLogVal() + log(n.cnt_);
+			double m = c.getLogVal();
 			double nl;
 
 			if (l>m) {
-				nl = l + Math.log(1 + Math.exp(m - l));
+				nl = l + log(1 + exp(m - l));
 			}
 			else {
-				nl = m + Math.log(1 + Math.exp(l - m));
+				nl = m + log(1 + exp(l - m));
 			}
 
-			if (mapDecompOpt.isEmpty() || nl>maxSumPrb) {
+			if (mapDecompOpt.empty() || nl>maxSumPrb) {
 				mapDecompOpt.clear();
 				maxSumPrb = nl;
 			}
 			if (nl == maxSumPrb) {
-				mapDecompOpt.add(di);
+				mapDecompOpt.push_back(di);
 			}
 		}
 
-		if (!n.chds_.containsKey(defMapDecomp)) {
+		if (n.chds_.find(defMapDecomp) == n.chds_.end()) {
 			double nl = defMapProdPrb_;
-			if (n.logval_ != Node.ZERO_LOGVAL_) {
-				nl = Math.log(n.cnt_) + n.logval_;
+			if (n.getLogVal() != n.ZERO_LOGVAL_) {
+				nl = log(n.cnt_) + n.getLogVal();
 
 				if (defMapProdPrb_>nl) {
-					nl = defMapProdPrb_ + Math.log(1 + Math.exp(nl - defMapProdPrb_));
+					nl = defMapProdPrb_ + log(1 + exp(nl - defMapProdPrb_));
 				}
 				else {
-					nl = nl + Math.log(Math.exp(defMapProdPrb_ - nl) + 1);
+					nl = nl + log(exp(defMapProdPrb_ - nl) + 1);
 				}
 			}
-			nl -= Parameter.sparsePrior_;
+			nl -= params.sparsePrior_;
 
-			if (mapDecompOpt.isEmpty() || nl>maxSumPrb) {
+			if (mapDecompOpt.empty() || nl>maxSumPrb) {
 				mapDecompOpt.clear();
 				maxSumPrb = nl;
-				mapDecompOpt.add(defMapDecomp);
+				mapDecompOpt.push_back(defMapDecomp);
 			}
 		}
 
-		n.logval_ = maxSumPrb - Math.log(n.cnt_ + 1);
+		n.setVal(maxSumPrb - log(n.cnt_ + 1));
 
 		// randomly break tie
-		mapDecomps_[ti] = mapDecompOpt.get(Utils.random_.nextInt(mapDecompOpt.size()));
+		std::default_random_engine generator;
+		std::uniform_int_distribution<int> distribution(0, mapDecompOpt.size());
+
+
+		mapDecomps_[ti] = mapDecompOpt.at(distribution(generator));
 		mapDecompOpt.clear();
 
-		if (mapTypes.isEmpty() || n.logval_>defMapSumPrb_) {
-			defMapSumPrb_ = n.logval_;
+		if (mapTypes.empty() || n.getLogVal() > defMapSumPrb_) {
+			defMapSumPrb_ = n.getLogVal();
 			mapTypes.clear();
 		}
-		if (n.logval_ == defMapSumPrb_) {
-			mapTypes.add(ti);
+		if (n.getLogVal() == defMapSumPrb_) {
+			mapTypes.push_back(ti);
 		}
 	}
 
 	if (chosenBlankIdx >= 0) {
-		SumNode n = types_.get(chosenBlankIdx);
-		n.logval_ = defMapProdPrb_ - Math.log(n.cnt_ + 1) - Parameter.sparsePrior_;
+		PoonSumNode& n = types_.at(chosenBlankIdx);
+		n.setVal(defMapProdPrb_ - log(n.cnt_ + 1) - params.sparsePrior_);
 		mapDecomps_[chosenBlankIdx] = defMapDecomp;
 
-		if (mapTypes.isEmpty() || n.logval_>defMapSumPrb_) {
-			defMapSumPrb_ = n.logval_;
-			mapTypes.clear(); mapTypes.add(chosenBlankIdx);
+		if (mapTypes.empty() || n.getLogVal() > defMapSumPrb_) {
+			defMapSumPrb_ = n.getLogVal();
+			mapTypes.clear(); mapTypes.push_back(chosenBlankIdx);
 		}
 	}
 
-	defMapTypeIdx_ = mapTypes.get(Utils.random_.nextInt(mapTypes.size()));
+	std::default_random_engine generator;
+	std::uniform_int_distribution<int> distribution(0, mapTypes.size());
+
+	defMapTypeIdx_ = mapTypes.at(distribution(generator));
 	mapTypes.clear();
 }
 
@@ -337,7 +351,7 @@ void PoonRegion::clearCurrParse(int instIdx) {
 
 	inst_type_.remove(instIdx);
 	inst_decomp_.remove(instIdx);
-	Decomposition d = Decomposition.getDecomposition(di);
+	PoonDecomposition d = PoonDecomposition::getDecomposition(di);
 
 	// record update if slave
 	if (!MyMPI.isClassMaster_ && SPN.isRecordingUpdate_) {

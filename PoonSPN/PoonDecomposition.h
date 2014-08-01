@@ -6,7 +6,7 @@ class PoonDecomposition
 {
 public:
 
-	static std::map<std::string, PoonDecomposition> id_decomp_;
+	static std::map<std::string, PoonDecomposition> id_decomp_;  // .cpp has instantiation of id_decomp_
 
 	std::string id_;
 	int regionId1_, regionId2_, typeId1_, typeId2_;

@@ -14,12 +14,17 @@ I should pass it into the main class though and try to pass it through as much a
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
+#include <random>
 
 using namespace std;
 
 
 class PoonParameter {
 public:
+	//random
+
+
+
 	int maxIter_;
 	double thresholdLLHChg_;
 	int batch_size_ = 50;

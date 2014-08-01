@@ -81,6 +81,7 @@
   <ItemGroup>
     <ClInclude Include="ImagePGM.h" />
     <ClInclude Include="PoonDataset.h" />
+    <ClInclude Include="PoonDecomposition.h" />
     <ClInclude Include="PoonInstance.h" />
     <ClInclude Include="PoonNode.h" />
     <ClInclude Include="PoonParameter.h" />
@@ -95,6 +96,7 @@
     <ClCompile Include="ImagePGM.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PoonDataset.cpp" />
+    <ClCompile Include="PoonDecomposition.cpp" />
     <ClCompile Include="PoonNode.cpp" />
     <ClCompile Include="PoonProdNode.cpp" />
     <ClCompile Include="PoonRegion.cpp" />

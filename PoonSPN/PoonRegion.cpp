@@ -1,6 +1,7 @@
 
 #include "PoonRegion.h"
 #include "PoonDecomposition.h"
+#include "PoonSPN.h"
 
 #include <random>
 
@@ -300,101 +301,106 @@ void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, PoonParame
 }
 
 // downward trace-back step
-void PoonRegion::setCurrParseToMAP(int instIdx) {
+void PoonRegion::setCurrParseToMAP(int instIdx, PoonParameter& params) {
 	if (a_ == 1 && b_ == 1) {
 		return;
 	}
 
 	// type node
-	if (types_.size() == 1) inst_type_.put(instIdx, 0);	// only one choice
+	if (types_.size() == 1) 
+		inst_type_[instIdx] = 0;	// only one choice
 
-	int chosenType = inst_type_.get(instIdx);
-	String di = mapDecomps_[chosenType];
+	int chosenType = inst_type_.at(instIdx);
+	string di = mapDecomps_[chosenType];
 
-	inst_decomp_.put(instIdx, di);
-	Decomposition d = Decomposition.getDecomposition(di);
-	Region r1 = Region.getRegion(d.regionId1_);
-	Region r2 = Region.getRegion(d.regionId2_);
+	inst_decomp_[instIdx]  = di;
+	PoonDecomposition d = PoonDecomposition::getDecomposition(di);
+	PoonRegion r1 = PoonRegion::getRegion(d.regionId1_);
+	PoonRegion r2 = PoonRegion::getRegion(d.regionId2_);
 
-	r1.inst_type_.put(instIdx, d.typeId1_);
-	r2.inst_type_.put(instIdx, d.typeId2_);
+	r1.inst_type_[instIdx] = d.typeId1_;
+	r2.inst_type_[instIdx] = d.typeId2_;
 
 	// record update if slave
-	if (!MyMPI.isClassMaster_ && SPN.isRecordingUpdate_) {
-		MyMPI.buf_int_[MyMPI.buf_idx_++] = id_;
-		MyMPI.buf_int_[MyMPI.buf_idx_++] = chosenType;
-		MyMPI.buf_int_[MyMPI.buf_idx_++] = d.regionId1_;
-		MyMPI.buf_int_[MyMPI.buf_idx_++] = d.regionId2_;
-		MyMPI.buf_int_[MyMPI.buf_idx_++] = d.typeId1_;
-		MyMPI.buf_int_[MyMPI.buf_idx_++] = d.typeId2_;
+	if (PoonSPN::isRecordingUpdate_) {
+		params.buf_int_[params.buf_idx_++] = id_;
+		params.buf_int_[params.buf_idx_++] = chosenType;
+		params.buf_int_[params.buf_idx_++] = d.regionId1_;
+		params.buf_int_[params.buf_idx_++] = d.regionId2_;
+		params.buf_int_[params.buf_idx_++] = d.typeId1_;
+		params.buf_int_[params.buf_idx_++] = d.typeId2_;
 	}
 
 	// if product node not created, create it now
-	ProdNode np = decomp_prod_.get(di);
-	if (np == null) {
-		np = new ProdNode();
-		decomp_prod_.put(di, np);
-		np.addChd(r1.types_.get(d.typeId1_));
-		np.addChd(r2.types_.get(d.typeId2_));
+	if (decomp_prod_.find(di) == decomp_prod_.end()) {
+		PoonProdNode np;
+		decomp_prod_[di] = np;
+		np.addChd(r1.types_.at(d.typeId1_));
+		np.addChd(r2.types_.at(d.typeId2_));
 	}
 
-	r1.setCurrParseToMAP(instIdx);
-	r2.setCurrParseToMAP(instIdx);
+	r1.setCurrParseToMAP(instIdx, params);
+	r2.setCurrParseToMAP(instIdx, params);
 }
 
 // clear an existing parse for incremental EM 
-void PoonRegion::clearCurrParse(int instIdx) {
-	if (!inst_type_.containsKey(instIdx)) return;
-	if (a_ == 1 && b_ == 1) return;
-	int cti = inst_type_.get(instIdx);
-	String di = inst_decomp_.get(instIdx);
+void PoonRegion::clearCurrParse(int instIdx, PoonParameter& params) {
+	if (inst_type_.find(instIdx) == inst_type_.end())
+		return;
+	if (a_ == 1 && b_ == 1) 
+		return;
+	int cti = inst_type_.at(instIdx);
+	string di = inst_decomp_.at(instIdx);
 
-	inst_type_.remove(instIdx);
-	inst_decomp_.remove(instIdx);
+	inst_type_.erase(instIdx);
+	inst_decomp_.erase(instIdx);
 	PoonDecomposition d = PoonDecomposition::getDecomposition(di);
 
 	// record update if slave
-	if (!MyMPI.isClassMaster_ && SPN.isRecordingUpdate_) {
-		MyMPI.buf_int_[MyMPI.buf_idx_++] = id_;
-		MyMPI.buf_int_[MyMPI.buf_idx_++] = cti;
-		MyMPI.buf_int_[MyMPI.buf_idx_++] = d.regionId1_;
-		MyMPI.buf_int_[MyMPI.buf_idx_++] = d.regionId2_;
-		MyMPI.buf_int_[MyMPI.buf_idx_++] = d.typeId1_;
-		MyMPI.buf_int_[MyMPI.buf_idx_++] = d.typeId2_;
+	if (PoonSPN::isRecordingUpdate_) {  //!MyMPI.isClassMaster_
+		params.buf_int_[params.buf_idx_++] = id_;
+		params.buf_int_[params.buf_idx_++] = cti;
+		params.buf_int_[params.buf_idx_++] = d.regionId1_;
+		params.buf_int_[params.buf_idx_++] = d.regionId2_;
+		params.buf_int_[params.buf_idx_++] = d.typeId1_;
+		params.buf_int_[params.buf_idx_++] = d.typeId2_;
 	}
 
-	Region r1 = Region.getRegion(d.regionId1_);
-	r1.clearCurrParse(instIdx);
-	Region r2 = Region.getRegion(d.regionId2_);
-	r2.clearCurrParse(instIdx);
+	PoonRegion r1 = PoonRegion::getRegion(d.regionId1_, params);
+	r1.clearCurrParse(instIdx, params);
+	PoonRegion r2 = PoonRegion::getRegion(d.regionId2_, params);
+	r2.clearCurrParse(instIdx, params);
 }
 
 // clear parse from other slaves
-void PoonRegion::clearCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, int ti2) {
+void PoonRegion::clearCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, int ti2, PoonParameter& params) {
 	if (a_ == 1 && b_ == 1) return;
 
-	String di = Decomposition.getIdStr(ri1, ri2, ti1, ti2);
-	SumNode n = types_.get(chosenType);
+	string di = PoonDecomposition::getIdStr(ri1, ri2, ti1, ti2);
+	PoonSumNode n = types_.at(chosenType);
 	n.removeChdOnly(di, 1);
 }
 
-void PoonRegion::setCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, int ti2) {
+void PoonRegion::setCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, int ti2, PoonParameter& params) {
 	if (a_ == 1 && b_ == 1) return;
 
-	String di = Decomposition.getIdStr(ri1, ri2, ti1, ti2);
-	SumNode n = types_.get(chosenType);
-	Decomposition d = Decomposition.getDecomposition(di);
+	string di = PoonDecomposition::getIdStr(ri1, ri2, ti1, ti2);
+	PoonSumNode& n = types_.at(chosenType);
+	PoonDecomposition& d = PoonDecomposition::getDecomposition(di);
 
 	// if prodnode not created, create it now
-	ProdNode np = decomp_prod_.get(di);
-	if (np == null) {
-		np = new ProdNode();
-		decomp_prod_.put(di, np);
-		Region r1 = Region.getRegion(d.regionId1_);
-		Region r2 = Region.getRegion(d.regionId2_);
+	if (decomp_prod_.find(di) == decomp_prod_.end()) {
+		PoonProdNode np;
+		decomp_prod_[di] =  np;
+		PoonRegion& r1 = PoonRegion::getRegion(d.regionId1_);
+		PoonRegion& r2 = PoonRegion::getRegion(d.regionId2_);
 
-		np.addChd(r1.types_.get(d.typeId1_));
-		np.addChd(r2.types_.get(d.typeId2_));
+		np.addChd(r1.types_.at(d.typeId1_));
+		np.addChd(r2.types_.at(d.typeId2_));
+		n.addChdOnly(di, 1, np);
 	}
-	n.addChdOnly(di, 1, np);
+	else{
+		PoonProdNode& np = decomp_prod_.at(di);
+		n.addChdOnly(di, 1, np);
+	}
 }

@@ -5,15 +5,19 @@
 #include <set>
 #include "PoonInstance.h"
 #include "PoonParameter.h"
+#include "PoonRegion.h"
+#include "PoonSumNode.h"
 
 using namespace std;
 
 
 class PoonSPN{
+public:
+	static bool isRecordingUpdate_; // = true;	// record update in clearparse/setcurrparse
+
 private:
 	PoonParameter params;
 
-	bool isRecordingUpdate_ = true;	// record update in clearparse/setcurrparse
 	vector<PoonInstance> trainingSet_;  //note that these should be wrapped into their own class so I can overload get instance
 
 	// completion

@@ -146,15 +146,15 @@ public:
 	void inferMAPForLearning(int instIdx, PoonInstance& inst, PoonParameter& params);
 
 	// downward trace-back step
-	void setCurrParseToMAP(int instIdx);
+	void setCurrParseToMAP(int instIdx, PoonParameter& params);
 
 	// clear an existing parse for incremental EM 
-	void clearCurrParse(int instIdx);
+	void clearCurrParse(int instIdx, PoonParameter& params);
 
 	// clear parse from other slaves
-	void clearCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, int ti2);
+	void clearCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, int ti2, PoonParameter& params);
 
-	void setCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, int ti2);
+	void setCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, int ti2, PoonParameter& params);
 
 
 };

@@ -6,6 +6,7 @@ PoonSPN::PoonSPN(PoonParameter& params){
 	this->params = params;
 	this->coarseDim1_ = params.inputDim1_ / params.baseResolution_;  //int division, will floor
 	this->coarseDim2_ = params.inputDim2_ / params.baseResolution_;
+	this->isRecordingUpdate_ = true;
 }
 
 PoonSPN::~PoonSPN()

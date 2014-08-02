@@ -47,7 +47,7 @@ public:
 
 	//MPI values
 	// buffer
-	static const int buf_idx_ = 0;
+	static int buf_idx_;
 	static const int buf_size_ = 10000000;
 	static const int buf_size_double_ = 100;
 	static std::vector<int> buf_int_;  //instantiation in cpp
@@ -86,24 +86,28 @@ public:
 private:
 	//Set default values
 	PoonParameter(){
-		int maxIter_ = 30;
-		double thresholdLLHChg_ = 0.1;
-		int batch_size_ = 50;
-		double sparsePrior_ = 1;
+		maxIter_ = 30;
+		thresholdLLHChg_ = 0.1;
+		batch_size_ = 50;
+		sparsePrior_ = 1;
 
 		// SPN
-		int numSumPerRegion_ = 20;
-		int inputDim1_ = 64;
-		int inputDim2_ = 64;
-		int baseResolution_ = 4;
-		double smoothSumCnt_ = 0.01;
-		int numComponentsPerVar_ = 4;
+		numSumPerRegion_ = 20;
+		inputDim1_ = 64;
+		inputDim2_ = 64;
+		baseResolution_ = 4;
+		smoothSumCnt_ = 0.01;
+		numComponentsPerVar_ = 4;
 
 		// Eval
-		int maxTestSize_ = 50;
-		string domain_ = "";
-		int numSlavePerClass_ = 50;
-		int numSlaveGrp_ = 1;
+		maxTestSize_ = 50;
+		domain_ = "";
+		numSlavePerClass_ = 50;
+		numSlaveGrp_ = 1;
+
+		//MPI
+		int buf_idx_ = 0;
+
 	};
 
 public:

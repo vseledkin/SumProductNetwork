@@ -287,7 +287,8 @@ void PoonSPN::clearUnusedInSPN() {
 	// coarse
 	for (int ca = 1; ca <= coarseDim1_; ca++){
 		for (int cb = 1; cb <= coarseDim2_; cb++) {
-			if (ca == 1 && cb == 1) continue;	// taken care of below in fine
+			if (ca == 1 && cb == 1) 
+				continue;	// taken care of below in fine
 			for (int a1 = 0; a1 <= params->inputDim1_ - ca*params->baseResolution_; a1 += params->baseResolution_) {
 				int a2 = a1 + ca*params->baseResolution_;
 				for (int b1 = 0; b1 <= params->inputDim2_ - cb*params->baseResolution_; b1 += params->baseResolution_) {

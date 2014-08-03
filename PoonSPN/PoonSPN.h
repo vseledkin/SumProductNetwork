@@ -31,7 +31,7 @@ private:
 
 
 public:
-	PoonSPN(){}; //default shouldn't be used.
+	PoonSPN(){}; //default, shouldn't be used.
 
 	PoonSPN(std::vector<PoonInstance>& trainingSet, std::shared_ptr<PoonParameter> params){
 

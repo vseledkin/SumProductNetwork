@@ -60,10 +60,13 @@
     <ClInclude Include="PoonSumNode.h">
       <Filter>Header Files\Poon</Filter>
     </ClInclude>
-    <ClInclude Include="Utils.h">
+    <ClInclude Include="PoonDecomposition.h">
       <Filter>Header Files\Poon</Filter>
     </ClInclude>
-    <ClInclude Include="PoonDecomposition.h">
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="PoonGenerativeLearning.h">
       <Filter>Header Files\Poon</Filter>
     </ClInclude>
   </ItemGroup>
@@ -99,6 +102,9 @@
       <Filter>Source Files\Poon</Filter>
     </ClCompile>
     <ClCompile Include="PoonParameter.cpp">
+      <Filter>Source Files\Poon</Filter>
+    </ClCompile>
+    <ClCompile Include="PoonGenerativeLearning.cpp">
       <Filter>Source Files\Poon</Filter>
     </ClCompile>
   </ItemGroup>

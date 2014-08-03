@@ -11,9 +11,15 @@ public:
 	std::map<string, double> chdCnts_;
 	double cnt_;
 
-	PoonSumNode(PoonParameter& param) {
-		cnt_ = param.smoothSumCnt_;
+	PoonSumNode(std::shared_ptr<PoonParameter> param) {
+		cnt_ = param->smoothSumCnt_;
 	}
+
+	PoonSumNode() {  //need a blank constuctor because the SPN has a sum node as the root; Annoying!
+		SharedParams<PoonParameter> spp;
+		auto params = spp.instance();
+		cnt_ = params->smoothSumCnt_;
+	};
 
 	void eval();
 

@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-using namespace std;
+
 
 /*
 A simple class for writing out images in PGM format.
@@ -17,14 +17,13 @@ class ImagePGM
 {
 private:
 	unsigned int height, width; //store these so that sub images are easier to work with
-	vector<vector <int> > image;
+	std::vector<std::vector <int> > image;
 public:
-	ImagePGM(vector<vector <double> >& buff);
+	ImagePGM(std::vector<std::vector <double> >& buff);
 
-	void writeImage(string pathName);
+	void writeImage(std::string pathName);
 	int getWidth(){ return width;};
 	int getHeight(){ return height; };
-
 };
 
 #endif

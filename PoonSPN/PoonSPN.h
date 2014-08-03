@@ -1,14 +1,13 @@
-#pragma once
+
 
 #include <vector>
 #include <string>
 #include <set>
-#include "PoonInstance.h"
+
 #include "PoonParameter.h"
+#include "PoonInstance.h"
 #include "PoonRegion.h"
 #include "PoonSumNode.h"
-
-using namespace std;
 
 
 class PoonSPN{
@@ -16,9 +15,9 @@ public:
 	static bool isRecordingUpdate_; // = true;	// record update in clearparse/setcurrparse
 
 private:
-	PoonParameter params;
+	std::shared_ptr<PoonParameter> params;
 
-	vector<PoonInstance> trainingSet_;  //note that these should be wrapped into their own class so I can overload get instance
+	std::vector<PoonInstance> trainingSet_;  //note that these should be wrapped into their own class so I can overload get instance
 
 	// completion
 	bool completeByMarginal_ = true; // complete pixel by marginal
@@ -32,10 +31,13 @@ private:
 
 
 public:
-	PoonSPN(PoonParameter& params);
-	~PoonSPN();
+	PoonSPN(std::shared_ptr<PoonParameter> params){
 
-
+		this->params = params;
+		this->coarseDim1_ = params->inputDim1_ / params->baseResolution_;  //int division, will floor
+		this->coarseDim2_ = params->inputDim2_ / params->baseResolution_;
+		this->isRecordingUpdate_ = true;
+	}
 
 	// ----------------------------------------------------------
 	// Bottom
@@ -120,9 +122,9 @@ public:
 	// -------------------------------------------------------------- //
 	// load/save
 	// -------------------------------------------------------------- //
-	void PoonSPN::saveDSPN(string mdlName);
-	void PoonSPN::loadDSPN(string mdlName, PoonSPN& spn);
-	void PoonSPN::addChd(PoonRegion r, PoonSumNode n, string di, double cc);
+	//void PoonSPN::saveDSPN(std::string mdlName);
+	//void PoonSPN::loadDSPN(std::string mdlName, PoonSPN& spn);
+	void PoonSPN::addChd(PoonRegion r, PoonSumNode n, std::string di, double cc);
 	// -------------------------------------------------------------- //
 	// utils
 	// -------------------------------------------------------------- //

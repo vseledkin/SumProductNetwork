@@ -5,30 +5,30 @@
 
 #include <random>
 
-
+using namespace std;
 
 // 
-PoonRegion::PoonRegion(int id, int a1, int a2, int b1, int b2, PoonParameter& params) {
+PoonRegion::PoonRegion(int id, int a1, int a2, int b1, int b2, std::shared_ptr<PoonParameter> params) {
 	id_ = id;
 	a1_ = a1;	a2_ = a2;
 	b1_ = b1;	b2_ = b2;
 	a_ = a2_ - a1_; b_ = b2_ - b1_;
 
-	if (a_  >params.baseResolution_ || b_ > params.baseResolution_) {
-		if (a_ % params.baseResolution_ != 0 || b_ % params.baseResolution_ != 0) {
-			cout << "ERR: base_res= " << params.baseResolution_ << " " << a1 << ", " << a2 << ", " << b1 << ", " << b2;
+	if (a_  > params->baseResolution_ || b_ > params->baseResolution_) {
+		if (a_ % params->baseResolution_ != 0 || b_ % params->baseResolution_ != 0) {
+			cout << "ERR: base_res= " << params->baseResolution_ << " " << a1 << ", " << a2 << ", " << b1 << ", " << b2;
 			exit(-1);
 		}
 	}
-	if (a_ <= params.baseResolution_ && b_ <= params.baseResolution_) 
+	if (a_ <= params->baseResolution_ && b_ <= params->baseResolution_) 
 		interval_ = 1; 
 	else 
-		interval_ = params.baseResolution_;
+		interval_ = params->baseResolution_;
 }
 
 
 // initialization
-void PoonRegion::resetTypes(int numTypes, PoonParameter& params) {
+void PoonRegion::resetTypes(int numTypes, std::shared_ptr<PoonParameter> params) {
 	// clean up
 	types_.clear();
 	inst_type_.clear();
@@ -40,7 +40,7 @@ void PoonRegion::resetTypes(int numTypes, PoonParameter& params) {
 	}
 }
 
-void PoonRegion::setTypes(int numTypes, PoonParameter& params) {
+void PoonRegion::setTypes(int numTypes, std::shared_ptr<PoonParameter> params) {
 	if (numTypes<types_.size()) { 
 		resetTypes(numTypes, params); 
 		return; 
@@ -65,9 +65,9 @@ void PoonRegion::setBaseGauss(double v) {
 	}
 }
 
-void PoonRegion::setBaseForSumOut(PoonParameter& params) {
+void PoonRegion::setBaseForSumOut(std::shared_ptr<PoonParameter> params) {
 	defMapTypeIdx_ = -1;
-	for (int i = 0; i< params.numComponentsPerVar_; i++) {
+	for (int i = 0; i< params->numComponentsPerVar_; i++) {
 		PoonSumNode& n = types_.at(i);
 		n.setVal(0);
 	}
@@ -115,7 +115,7 @@ void PoonRegion::inferMAP(int instIdx, PoonInstance& inst) {
 }
 
 // compute MAP state at learning time: could tap a previous unused node
-void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, PoonParameter& params) {
+void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, std::shared_ptr<PoonParameter> params) {
 	vector<string> defMapDecompOpts;
 	string defMapDecomp;
 
@@ -254,7 +254,8 @@ void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, PoonParame
 					nl = nl + log(exp(defMapProdPrb_ - nl) + 1);
 				}
 			}
-			nl -= params.sparsePrior_;
+
+			nl -= params->sparsePrior_;
 
 			if (mapDecompOpt.empty() || nl>maxSumPrb) {
 				mapDecompOpt.clear();
@@ -284,7 +285,7 @@ void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, PoonParame
 
 	if (chosenBlankIdx >= 0) {
 		PoonSumNode& n = types_.at(chosenBlankIdx);
-		n.setVal(defMapProdPrb_ - log(n.cnt_ + 1) - params.sparsePrior_);
+		n.setVal(defMapProdPrb_ - log(n.cnt_ + 1) - params->sparsePrior_);
 		mapDecomps_[chosenBlankIdx] = defMapDecomp;
 
 		if (mapTypes.empty() || n.getLogVal() > defMapSumPrb_) {
@@ -301,7 +302,7 @@ void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, PoonParame
 }
 
 // downward trace-back step
-void PoonRegion::setCurrParseToMAP(int instIdx, PoonParameter& params) {
+void PoonRegion::setCurrParseToMAP(int instIdx, std::shared_ptr<PoonParameter> params) {
 	if (a_ == 1 && b_ == 1) {
 		return;
 	}
@@ -315,20 +316,20 @@ void PoonRegion::setCurrParseToMAP(int instIdx, PoonParameter& params) {
 
 	inst_decomp_[instIdx]  = di;
 	PoonDecomposition d = PoonDecomposition::getDecomposition(di);
-	PoonRegion r1 = PoonRegion::getRegion(d.regionId1_);
-	PoonRegion r2 = PoonRegion::getRegion(d.regionId2_);
+	PoonRegion r1 = PoonRegion::getRegion(d.regionId1_, params);
+	PoonRegion r2 = PoonRegion::getRegion(d.regionId2_, params);
 
 	r1.inst_type_[instIdx] = d.typeId1_;
 	r2.inst_type_[instIdx] = d.typeId2_;
 
 	// record update if slave
 	if (PoonSPN::isRecordingUpdate_) {
-		params.buf_int_[params.buf_idx_++] = id_;
-		params.buf_int_[params.buf_idx_++] = chosenType;
-		params.buf_int_[params.buf_idx_++] = d.regionId1_;
-		params.buf_int_[params.buf_idx_++] = d.regionId2_;
-		params.buf_int_[params.buf_idx_++] = d.typeId1_;
-		params.buf_int_[params.buf_idx_++] = d.typeId2_;
+		params->buf_int_[params->buf_idx_++] = id_;
+		params->buf_int_[params->buf_idx_++] = chosenType;
+		params->buf_int_[params->buf_idx_++] = d.regionId1_;
+		params->buf_int_[params->buf_idx_++] = d.regionId2_;
+		params->buf_int_[params->buf_idx_++] = d.typeId1_;
+		params->buf_int_[params->buf_idx_++] = d.typeId2_;
 	}
 
 	// if product node not created, create it now
@@ -344,7 +345,7 @@ void PoonRegion::setCurrParseToMAP(int instIdx, PoonParameter& params) {
 }
 
 // clear an existing parse for incremental EM 
-void PoonRegion::clearCurrParse(int instIdx, PoonParameter& params) {
+void PoonRegion::clearCurrParse(int instIdx, std::shared_ptr<PoonParameter> params) {
 	if (inst_type_.find(instIdx) == inst_type_.end())
 		return;
 	if (a_ == 1 && b_ == 1) 
@@ -358,12 +359,12 @@ void PoonRegion::clearCurrParse(int instIdx, PoonParameter& params) {
 
 	// record update if slave
 	if (PoonSPN::isRecordingUpdate_) {  //!MyMPI.isClassMaster_
-		params.buf_int_[params.buf_idx_++] = id_;
-		params.buf_int_[params.buf_idx_++] = cti;
-		params.buf_int_[params.buf_idx_++] = d.regionId1_;
-		params.buf_int_[params.buf_idx_++] = d.regionId2_;
-		params.buf_int_[params.buf_idx_++] = d.typeId1_;
-		params.buf_int_[params.buf_idx_++] = d.typeId2_;
+		params->buf_int_[params->buf_idx_++] = id_;
+		params->buf_int_[params->buf_idx_++] = cti;
+		params->buf_int_[params->buf_idx_++] = d.regionId1_;
+		params->buf_int_[params->buf_idx_++] = d.regionId2_;
+		params->buf_int_[params->buf_idx_++] = d.typeId1_;
+		params->buf_int_[params->buf_idx_++] = d.typeId2_;
 	}
 
 	PoonRegion r1 = PoonRegion::getRegion(d.regionId1_, params);
@@ -373,16 +374,18 @@ void PoonRegion::clearCurrParse(int instIdx, PoonParameter& params) {
 }
 
 // clear parse from other slaves
-void PoonRegion::clearCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, int ti2, PoonParameter& params) {
-	if (a_ == 1 && b_ == 1) return;
+void PoonRegion::clearCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, int ti2, std::shared_ptr<PoonParameter> params) {
+	if (a_ == 1 && b_ == 1) 
+		return;
 
 	string di = PoonDecomposition::getIdStr(ri1, ri2, ti1, ti2);
 	PoonSumNode n = types_.at(chosenType);
 	n.removeChdOnly(di, 1);
 }
 
-void PoonRegion::setCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, int ti2, PoonParameter& params) {
-	if (a_ == 1 && b_ == 1) return;
+void PoonRegion::setCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, int ti2, std::shared_ptr<PoonParameter> params) {
+	if (a_ == 1 && b_ == 1) 
+		return;
 
 	string di = PoonDecomposition::getIdStr(ri1, ri2, ti1, ti2);
 	PoonSumNode& n = types_.at(chosenType);
@@ -392,8 +395,8 @@ void PoonRegion::setCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, 
 	if (decomp_prod_.find(di) == decomp_prod_.end()) {
 		PoonProdNode np;
 		decomp_prod_[di] =  np;
-		PoonRegion& r1 = PoonRegion::getRegion(d.regionId1_);
-		PoonRegion& r2 = PoonRegion::getRegion(d.regionId2_);
+		PoonRegion& r1 = PoonRegion::getRegion(d.regionId1_, params);
+		PoonRegion& r2 = PoonRegion::getRegion(d.regionId2_, params);
 
 		np.addChd(r1.types_.at(d.typeId1_));
 		np.addChd(r2.types_.at(d.typeId2_));

@@ -3,6 +3,7 @@
 #include "PoonDataset.h"
 #include <fstream>
 
+using namespace std;
 
 //does normalization and copies buffer to inst
 //changed to read in doubles from the start
@@ -13,8 +14,9 @@ void PoonDataset::setInstance(vector<vector<double> >& buf, PoonInstance inst){
 	double tf = 0;
 	double varf = 0;
 	int cf = 0;
-	for (int i = 0; i < this->params.inputDim1_; i++){
-		for (int j = 0; j < this->params.inputDim2_; j++) {
+
+	for (int i = 0; i < params->inputDim1_; i++){
+		for (int j = 0; j < params->inputDim2_; j++) {
 			tf += buf[i][j];
 			varf += buf[i][j] * buf[i][j]; cf++;
 		}
@@ -24,8 +26,8 @@ void PoonDataset::setInstance(vector<vector<double> >& buf, PoonInstance inst){
 	inst.mean_ = tf; 
 	inst.std_ = sqrt(varf - tf*tf);
 
-	for (int i = 0; i < this->params.inputDim1_; i++){
-		for (int j = 0; j < this->params.inputDim2_; j++) {
+	for (int i = 0; i < params->inputDim1_; i++){
+		for (int j = 0; j < params->inputDim2_; j++) {
 			inst.vals_[i][j] = (buf[i][j] - inst.mean_) / inst.std_;
 		}
 	}
@@ -38,7 +40,7 @@ void PoonDataset::setInstance(vector<vector<double> >& buf, PoonInstance inst){
 
 void PoonDataset::loadOlivetti(){
 	set<int> tis;
-	this->genTestIdx(400, this->params.maxTestSize_, tis);
+	this->genTestIdx(400, params->maxTestSize_, tis);
 
 
 	ifstream inFile(this->olivettiRawFileName_);
@@ -82,11 +84,11 @@ void PoonDataset::loadOlivetti(){
 //normalizes image in the set instance funtion
 void PoonDataset::readOlivettiInstance(vector<vector<double> >& faces, int pi, PoonInstance& inst){
 	vector<vector<double> > buff;
-	buff.resize(this->params.inputDim1_, vector<double>(this->params.inputDim2_, 0.0)); //initialize
+	buff.resize(params->inputDim1_, vector<double>(params->inputDim2_, 0.0)); //initialize
 
 	int k = 0;
-	for (int i = 0; i < this->params.inputDim1_; i++){
-		for (int j = 0; j < this->params.inputDim2_; j++) {
+	for (int i = 0; i < params->inputDim1_; i++){
+		for (int j = 0; j < params->inputDim2_; j++) {
 			buff[i][j] = (double)faces[k][pi];
 			k++;
 		}

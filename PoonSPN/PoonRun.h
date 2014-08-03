@@ -13,47 +13,32 @@ This class acts as the main.
 
 #include "PoonParameter.h"
 
-using namespace std;
-
 
 
 class PoonRun{
 
 public:
 	// domains
-	const string DOM_OLIVETTI_ = "O";
-	const string DOM_CALTECH_ = "C";
+	const std::string DOM_OLIVETTI_ = "O";
+	const std::string DOM_CALTECH_ = "C";
 
 	// directory
-	const string expDir_ = "/projects/dm/2/hoifung/projects/dspn/release";
+	const std::string expDir_ = "/projects/dm/2/hoifung/projects/dspn/release";
 
-	const string oliveDataDir_ = expDir_ + "/data/olivetti";
-	const string oliveRstDir_ = expDir_ + "/results/olivetti/completions";
-	const string oliveMdlDir_ = expDir_ + "/results/olivetti/models";
+	const std::string oliveDataDir_ = expDir_ + "/data/olivetti";
+	const std::string oliveRstDir_ = expDir_ + "/results/olivetti/completions";
+	const std::string oliveMdlDir_ = expDir_ + "/results/olivetti/models";
 
-	const string calDataDir_ = expDir_ + "/data/caltech";
-	const string calRstDir_ = expDir_ + "/results/caltech/completions";
-	const string calMdlDir_ = expDir_ + "/results/caltech/models";
-
-	/* don't know, think it finds all files with ".raw.rescale"
-	static FilenameFilter caltechImgNameFilter_ = new FilenameFilter(){
-		@Override
-		public boolean accept(File dir, String name) {
-			if (name.indexOf(".raw.rescale")>0) return true;
-			return false;
-		}
-	};
-
-	*/
+	const std::string calDataDir_ = expDir_ + "/data/caltech";
+	const std::string calRstDir_ = expDir_ + "/results/caltech/completions";
+	const std::string calMdlDir_ = expDir_ + "/results/caltech/models";
 
 	PoonRun(int argc, char* argv[]); //main
 
 private:
 	//For running the different data sets
-	void runOlivetti(PoonParameter& Params);
-	void runCaltech(PoonParameter& Params);
-
-	
+	void runOlivetti(std::shared_ptr<PoonParameter> Params);
+	void runCaltech(std::shared_ptr<PoonParameter> Params);
 
 };
 

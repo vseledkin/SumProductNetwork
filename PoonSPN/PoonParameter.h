@@ -12,11 +12,10 @@ I should pass it into the main class though and try to pass it through as much a
 
 #include <string>
 #include <vector>
+#include <memory>
 #include <iostream>
 #include <stdlib.h>
 #include <random>
-
-using namespace std;
 
 
 class PoonParameter {
@@ -73,17 +72,6 @@ public:
 		MPI.COMM_WORLD.Send(MyMPI.buf_char_, 0, 1, MPI.CHAR, dest, tag);
 	}*/
 
-public:
-	//singleton
-	static PoonParameter& getInstance(){
-		static PoonParameter    instance;
-		return instance;
-	};
-
-	PoonParameter(PoonParameter const&);              // Don't Implement
-	void operator=(PoonParameter const&); // Don't implement
-
-private:
 	//Set default values
 	PoonParameter(){
 		maxIter_ = 30;
@@ -106,18 +94,16 @@ private:
 		numSlaveGrp_ = 1;
 
 		//MPI
-		int buf_idx_ = 0;
-
+		buf_idx_ = 0;
 	};
 
-public:
 	//Poon's proc and procArgs
 
 	//return true if valid, false if not
 	bool processArgs(int argc, char* argv[]){
 		//parse the arguments
 		
-		vector<string> args(argv + 1, argv + argc);
+		std::vector<std::string> args(argv + 1, argv + argc);
 		for (unsigned int i = 0; i < args.size(); i++){
 			if (args[i] == "-d") {
 				this->domain_ = args[++i];
@@ -150,7 +136,7 @@ public:
 
 		//safty check
 		if (this->domain_ == "") {
-			cout << "\n\nOptions: [-d <domain>]\n[-sp <sparsePrior>]\n[-br <baseResolution>]\n[-ncv <numComponentsPerVar>]\n[-nsr <numSumPerRegion>]\n[-ct <convergencyThrehold>]\n[-bs <batchSize>]\n[-ns <numSlavePerCat>]\n[-nsg <numSlaveGrp>]\n";
+			std::cout << "\n\nOptions: [-d <domain>]\n[-sp <sparsePrior>]\n[-br <baseResolution>]\n[-ncv <numComponentsPerVar>]\n[-nsr <numSumPerRegion>]\n[-ct <convergencyThrehold>]\n[-bs <batchSize>]\n[-ns <numSlavePerCat>]\n[-nsg <numSlaveGrp>]\n";
 			return false;
 		}
 		
@@ -158,5 +144,29 @@ public:
 	};
 
 };
+
+//a class to turn the paramaters into a singletonesque class
+//the instance will stay alive as long as there is an instance of it alive somwhere.
+//This alows one to use it as singleton if they desire.
+template <typename PoonParameter>
+class SharedParams {
+public:
+	static std::shared_ptr<PoonParameter> instance()
+	{
+		auto ptr = s_instance.lock();
+
+		if (!ptr) {
+			ptr = std::make_shared<PoonParameter>();
+			s_instance = ptr;
+		}
+
+		return ptr;
+	}
+
+private:
+	static std::weak_ptr<Target> s_instance;
+};
+
+template <typename PoonParameter> std::weak_ptr<PoonParameter> SharedPrams<PoonParameter>::s_instance;
 
 #endif

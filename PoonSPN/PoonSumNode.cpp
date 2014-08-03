@@ -3,6 +3,7 @@
 #include <cmath>
 #include "Utils.h"
 
+using namespace std;
 
 void PoonSumNode::eval() {
 	double v = 0;

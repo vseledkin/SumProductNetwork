@@ -18,17 +18,21 @@ import mpi.MPI;
 #include "PoonParameter.h"
 #include "PoonDataset.h"
 
+using namespace std;
+
 PoonRun::PoonRun(int argc, char* argv[]){
 
-	PoonParameter Params;
-	if(!Params.processArgs(argc, argv)){
+	SharedParams<PoonParameter> spp;
+	std::shared_ptr<PoonParameter> Params = spp.instance();
+
+	if(!Params->processArgs(argc, argv)){
 		return;  //failed to process args
 	}
 
-	if (Params.domain_ == this->DOM_OLIVETTI_) {
+	if (Params->domain_ == this->DOM_OLIVETTI_) {
 		runOlivetti(Params);
 	}
-	else if (Params.domain_ == this->DOM_CALTECH_) {
+	else if (Params->domain_ == this->DOM_CALTECH_) {
 		runCaltech(Params);
 	}
 	else{
@@ -37,12 +41,12 @@ PoonRun::PoonRun(int argc, char* argv[]){
 }
 
 
-void PoonRun::runCaltech(PoonParameter& Params){
+void PoonRun::runCaltech(std::shared_ptr<PoonParameter>Params){
 	//TODO LATER
 }
 
 
-void PoonRun::runOlivetti(PoonParameter& Params){
+void PoonRun::runOlivetti(std::shared_ptr<PoonParameter> Params){
 	
 	bool debug = true;
 
@@ -54,7 +58,6 @@ void PoonRun::runOlivetti(PoonParameter& Params){
 
 	}
 	
-
 
 	/*
 	// learn

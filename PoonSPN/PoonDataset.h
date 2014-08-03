@@ -7,21 +7,20 @@
 #include "PoonInstance.h"
 #include "PoonParameter.h"
 
-using namespace std;
 
 //Future note, this class should be abstract with a virtual load class
 class PoonDataset{
 public:
 
-	vector<vector<int> > tmp_;  // buffer for proc imgs 
-	PoonParameter params;
+	std::vector<vector<int> > tmp_;  // buffer for proc imgs 
+	std::shared_ptr<PoonParameter> params;
 
 	// data
-	string expDir_ = "../..";
-	string olivettiRawFileName_ = expDir_ + "/data/olivetti/olivetti.raw";
-	string calDataDir_ = expDir_ + "/data/caltech";
-	string calRstDir_ = expDir_ + "/results/caltech/completions";
-	string calMdlDir_ = expDir_ + "/results/caltech/models";
+	std::string expDir_ = "../..";
+	std::string olivettiRawFileName_ = expDir_ + "/data/olivetti/olivetti.raw";
+	std::string calDataDir_ = expDir_ + "/data/caltech";
+	std::string calRstDir_ = expDir_ + "/results/caltech/completions";
+	std::string calMdlDir_ = expDir_ + "/results/caltech/models";
 	int RESCALE_LEN_ = 100;
 	/*
 	static FilenameFilter calFileNameFilter_ = new FilenameFilter(){
@@ -32,23 +31,23 @@ public:
 	
 private:
 	//note that these should be wrapped into their own class so I can overload get instance
-	vector<PoonInstance> train_;
-	vector<PoonInstance> test_;
+	std::vector<PoonInstance> train_;
+	std::vector<PoonInstance> test_;
 
 public:
-	PoonDataset(PoonParameter& p){
+	PoonDataset(std::shared_ptr<PoonParameter> p){
 		this->params = p;
 	};
 
-	vector<PoonInstance>& getTrain(){ return train_; };
-	vector<PoonInstance>& getTest(){ return test_; };
+	std::vector<PoonInstance>& getTrain(){ return train_; };
+	std::vector<PoonInstance>& getTest(){ return test_; };
 
 	// dataset
 	void loadOlivetti();
 
 private:
 	
-	void setInstance(vector<vector<double> >& buf, PoonInstance inst);
+	void setInstance(std::vector<std::vector<double> >& buf, PoonInstance inst);
 
 	//silly function, should have randomized options and be more robust
 	void genTestIdx(int maxSize, int testSize, set<int>& tis) {
@@ -57,7 +56,7 @@ private:
 		}
 	};
 
-	void readOlivettiInstance(vector<vector<double> >& faces, int pi, PoonInstance& inst);
+	void readOlivettiInstance(std::vector<std::vector<double> >& faces, int pi, PoonInstance& inst);
 };
 
 

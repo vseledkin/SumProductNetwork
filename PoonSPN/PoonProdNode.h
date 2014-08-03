@@ -3,6 +3,7 @@
 #include<vector>
 
 #include "PoonNode.h"
+
 class PoonProdNode : public PoonNode
 {
 public:

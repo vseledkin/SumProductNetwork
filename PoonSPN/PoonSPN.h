@@ -31,12 +31,15 @@ private:
 
 
 public:
-	PoonSPN(std::shared_ptr<PoonParameter> params){
+	PoonSPN(){}; //default shouldn't be used.
+
+	PoonSPN(std::vector<PoonInstance>& trainingSet, std::shared_ptr<PoonParameter> params){
 
 		this->params = params;
 		this->coarseDim1_ = params->inputDim1_ / params->baseResolution_;  //int division, will floor
 		this->coarseDim2_ = params->inputDim2_ / params->baseResolution_;
 		this->isRecordingUpdate_ = true;
+		trainingSet_ = trainingSet;
 	}
 
 	// ----------------------------------------------------------

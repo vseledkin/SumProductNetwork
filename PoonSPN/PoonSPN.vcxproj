@@ -82,6 +82,7 @@
     <ClInclude Include="ImagePGM.h" />
     <ClInclude Include="PoonDataset.h" />
     <ClInclude Include="PoonDecomposition.h" />
+    <ClInclude Include="PoonGenerativeLearning.h" />
     <ClInclude Include="PoonInstance.h" />
     <ClInclude Include="PoonNode.h" />
     <ClInclude Include="PoonParameter.h" />
@@ -97,6 +98,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PoonDataset.cpp" />
     <ClCompile Include="PoonDecomposition.cpp" />
+    <ClCompile Include="PoonGenerativeLearning.cpp" />
     <ClCompile Include="PoonNode.cpp" />
     <ClCompile Include="PoonParameter.cpp" />
     <ClCompile Include="PoonProdNode.cpp" />

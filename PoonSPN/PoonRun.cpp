@@ -50,12 +50,12 @@ void PoonRun::runOlivetti(std::shared_ptr<PoonParameter> Params){
 	
 	bool debug = true;
 
-	//MyMPI.setConstantsForImgs();
+	//reading in data set
 	PoonDataset data(Params);
 	data.loadOlivetti();
 
 	if (debug){
-
+		//write out images to confirm they work
 	}
 	
 

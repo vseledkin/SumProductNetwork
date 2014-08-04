@@ -20,7 +20,8 @@ I should pass it into the main class though and try to pass it through as much a
 
 class PoonParameter {
 public:
-	//random
+	//input and files
+	std::string inputPath_ = "";
 
 
 
@@ -107,6 +108,9 @@ public:
 		for (unsigned int i = 0; i < args.size(); i++){
 			if (args[i] == "-d") {
 				this->domain_ = args[++i];
+			}
+			else if (args[i] == "-path") {
+				this->inputPath_ = args[++i];
 			}
 			else if (args[i] == "-ncv") {
 				this->numComponentsPerVar_ = atoi(args[++i].c_str());

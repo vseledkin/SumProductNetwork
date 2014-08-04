@@ -22,12 +22,7 @@ public:
 	std::string calRstDir_ = expDir_ + "/results/caltech/completions";
 	std::string calMdlDir_ = expDir_ + "/results/caltech/models";
 	int RESCALE_LEN_ = 100;
-	/*
-	static FilenameFilter calFileNameFilter_ = new FilenameFilter(){
-		public boolean accept(File dir, String name) {
-			if (name.indexOf(".raw.rescale")<0) return false; else return true;
-		}
-	};*/
+
 	
 private:
 	//note that these should be wrapped into their own class so I can overload get instance
@@ -37,8 +32,15 @@ private:
 public:
 	PoonDataset(std::shared_ptr<PoonParameter> p){
 		this->params = p;
+		expDir_ = params->inputPath_;
+
+		olivettiRawFileName_ = expDir_ + "/data/olivetti/olivetti.raw";
+		calDataDir_ = expDir_ + "/data/caltech";
+		calRstDir_ = expDir_ + "/results/caltech/completions";
+		calMdlDir_ = expDir_ + "/results/caltech/models";
 	};
 
+	
 	std::vector<PoonInstance>& getTrain(){ return train_; };
 	std::vector<PoonInstance>& getTest(){ return test_; };
 

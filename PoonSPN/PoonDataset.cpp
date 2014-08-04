@@ -57,19 +57,24 @@ void PoonDataset::loadOlivetti(){
 
 	faces.resize(numImages, vector<double>(imageSize, 0.0)); //initialize
 
+	//cout << faces.size() << endl;
+	//cout << faces[0].size() << endl;
+
 	//i is the image instace
 	//j is the image in a row
-	for (int i = 0; i < imageSize; ++i) {
-		for (int j = 0; j < numImages; ++j) {
-			inFile >> faces[imageSize][numImages];
+	for (int i = 0; i < imageSize; i++) {
+		for (int j = 0; j < numImages; j++) {
+			//cout << i << " " << j << endl;
+			inFile >> faces[j][i];
 		}
 	}
 
 	inFile.close();
+	cout << "Done reading in file" << endl;
 
 	//make test and training set
-	for (int pi = 0; pi<imageSize; pi++) {
-		PoonInstance inst;
+	for (int pi = 0; pi < numImages; pi++) {
+		PoonInstance inst(params->inputDim1_, params->inputDim2_);
 		readOlivettiInstance(faces, pi, inst);
 		if (tis.find(pi) != tis.end()){
 			this->test_.push_back(inst);
@@ -89,7 +94,7 @@ void PoonDataset::readOlivettiInstance(vector<vector<double> >& faces, int pi, P
 	int k = 0;
 	for (int i = 0; i < params->inputDim1_; i++){
 		for (int j = 0; j < params->inputDim2_; j++) {
-			buff[i][j] = (double)faces[k][pi];
+			buff[i][j] = (double)faces[pi][k];
 			k++;
 		}
 	}

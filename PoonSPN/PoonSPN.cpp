@@ -1,5 +1,5 @@
 #include "PoonSPN.h"
-#include "Utils.h"
+#include "Utils/Utils.h"
 #include "PoonDecomposition.h"
 
 #include <algorithm>  

@@ -18,9 +18,9 @@ public:
 	// data
 	std::string expDir_ = "../..";
 	std::string olivettiRawFileName_ = expDir_ + "/data/olivetti/olivetti.raw";
-	std::string calDataDir_ = expDir_ + "/data/caltech";
-	std::string calRstDir_ = expDir_ + "/results/caltech/completions";
-	std::string calMdlDir_ = expDir_ + "/results/caltech/models";
+	std::string dataDir_ = expDir_ + "/data/olivetti";
+	std::string rstDir_ = expDir_ + "/results/olivetti/completions";
+	std::string mdlDir_ = expDir_ + "/results/olivetti/models";
 	int RESCALE_LEN_ = 100;
 
 	
@@ -35,9 +35,9 @@ public:
 		expDir_ = params->inputPath_;
 
 		olivettiRawFileName_ = expDir_ + "/data/olivetti/olivetti.raw";
-		calDataDir_ = expDir_ + "/data/caltech";
-		calRstDir_ = expDir_ + "/results/caltech/completions";
-		calMdlDir_ = expDir_ + "/results/caltech/models";
+		dataDir_ = expDir_ + "/data/olivetti";
+		rstDir_ = expDir_ + "/results/olivetti/completions";
+		mdlDir_ = expDir_ + "/results/olivetti/models";
 	};
 
 	

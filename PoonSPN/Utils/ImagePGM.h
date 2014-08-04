@@ -4,8 +4,6 @@
 #include <vector>
 #include <string>
 
-
-
 /*
 A simple class for writing out images in PGM format.
 This is mostly useful if you don't want to rely on an
@@ -19,11 +17,17 @@ private:
 	unsigned int height, width; //store these so that sub images are easier to work with
 	std::vector<std::vector <int> > image;
 public:
-	ImagePGM(std::vector<std::vector <double> >& buff);
 
-	void writeImage(std::string pathName);
-	int getWidth(){ return width;};
-	int getHeight(){ return height; };
+	//assumes buff is zero meaned
+	ImagePGM(const std::vector<std::vector <double> >& buff);
+
+	void writeImage(const std::string pathName) const;
+	int getWidth() const { return width; };
+	int getHeight() const { return height; };
+
+	//takes a zero meaned image to 128 mean
+	//mins and maxes at 0 and 255
+	void rescaleImageValues();
 };
 
 #endif

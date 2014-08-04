@@ -92,9 +92,10 @@ void PoonDataset::readOlivettiInstance(vector<vector<double> >& faces, int pi, P
 	buff.resize(params->inputDim1_, vector<double>(params->inputDim2_, 0.0)); //initialize
 
 	int k = 0;
-	for (int i = 0; i < params->inputDim1_; i++){
-		for (int j = 0; j < params->inputDim2_; j++) {
-			buff[i][j] = (double)faces[pi][k];
+	
+	for (int j = 0; j < params->inputDim2_; j++) {  //notice the flipped loops
+		for (int i = 0; i < params->inputDim1_; i++){
+			buff[i][j] = faces[pi][k];
 			k++;
 		}
 	}

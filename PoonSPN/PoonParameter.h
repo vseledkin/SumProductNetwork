@@ -32,8 +32,8 @@ public:
 
 	// SPN
 	int numSumPerRegion_;
-	int inputDim1_;
-	int inputDim2_;
+	int inputDim1_;  //height
+	int inputDim2_; //width
 	int baseResolution_;
 	double smoothSumCnt_;
 	int numComponentsPerVar_;

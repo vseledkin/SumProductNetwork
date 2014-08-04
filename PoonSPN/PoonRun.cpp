@@ -1,22 +1,10 @@
 
-/*
-package eval;
-
-import spn.SPN;
-
-import spn.GenerativeLearning;
-
-import java.io.*;
-import java.util.*;
-
-import common.*;
-
-import mpi.MPI;
-*/
-
 #include "PoonRun.h"
 #include "PoonParameter.h"
 #include "PoonDataset.h"
+#include "Utils/ImagePGM.h"
+
+#include <sstream> 
 
 using namespace std;
 
@@ -42,7 +30,7 @@ PoonRun::PoonRun(int argc, char* argv[]){
 
 
 void PoonRun::runCaltech(std::shared_ptr<PoonParameter>Params){
-	//TODO LATER
+	//TODO LATER ..or never which ever
 }
 
 
@@ -56,6 +44,15 @@ void PoonRun::runOlivetti(std::shared_ptr<PoonParameter> Params){
 
 	if (debug){
 		//write out images to confirm they work
+		int i = 0;
+		for (auto& inst : data.getTrain()){
+			stringstream s;
+			s << data.rstDir_ << "/" << i << "_test_read_in.pgm";
+			ImagePGM image(inst.vals_);
+			image.rescaleImageValues();
+			image.writeImage(s.str());
+			i++;
+		}
 	}
 	
 

@@ -7,6 +7,8 @@
 
 using namespace std;
 
+std::map<int, PoonRegion> PoonRegion::id_regions_;
+
 // 
 PoonRegion::PoonRegion(int id, int a1, int a2, int b1, int b2, std::shared_ptr<PoonParameter> params) {
 	id_ = id;
@@ -36,7 +38,7 @@ void PoonRegion::resetTypes(int numTypes, std::shared_ptr<PoonParameter> params)
 	decomp_prod_.clear();
 	mapDecomps_.clear();
 	for (int i = 0; i< numTypes; i++) {
-		types_.push_back(PoonSumNode(params));
+		types_.push_back(make_shared<PoonSumNode>(params));
 	}
 }
 
@@ -47,7 +49,7 @@ void PoonRegion::setTypes(int numTypes, std::shared_ptr<PoonParameter> params) {
 	}
 	int nn = numTypes - types_.size();
 	for (int i = 0; i<nn; i++) {
-		types_.push_back(PoonSumNode(params));
+		types_.push_back(make_shared<PoonSumNode>(params));
 	}
 }
 
@@ -56,11 +58,11 @@ void PoonRegion::setBaseGauss(double v) {
 	defMapTypeIdx_ = -1;
 	double mp = 0;
 	for (int i = 0; i < types_.size(); i++) {
-		PoonSumNode& n = types_.at(i);
-		n.setVal(cmpGauss(v, means_[i]));
-		if (defMapTypeIdx_ == -1 || n.getLogVal() >mp) {
+		auto n = types_.at(i);
+		n->setVal(cmpGauss(v, means_[i]));
+		if (defMapTypeIdx_ == -1 || n->getLogVal() >mp) {
 			defMapTypeIdx_ = i;
-			mp = n.getLogVal();
+			mp = n->getLogVal();
 		}
 	}
 }
@@ -68,8 +70,8 @@ void PoonRegion::setBaseGauss(double v) {
 void PoonRegion::setBaseForSumOut(std::shared_ptr<PoonParameter> params) {
 	defMapTypeIdx_ = -1;
 	for (int i = 0; i< params->numComponentsPerVar_; i++) {
-		PoonSumNode& n = types_.at(i);
-		n.setVal(0);
+		auto n = types_.at(i);
+		n->setVal(0);
 	}
 }
 
@@ -78,23 +80,23 @@ void PoonRegion::inferMAP(int instIdx, PoonInstance& inst) {
 
 	// compute prod values
 	for (auto& kv : decomp_prod_) {
-		PoonProdNode& n = decomp_prod_.at(kv.first);
-		n.eval();
+		auto n = decomp_prod_.at(kv.first);
+		n->eval();
 	}
 
 	// evaluate children for sum nodes 
 	for (int ti = 0; ti < types_.size(); ti++) {
-		if (types_.at(ti).chds_.size() == 0) 
+		if (types_.at(ti)->chds_.size() == 0) 
 			continue;
-		PoonSumNode& n = types_.at(ti);
-		n.eval();
+		auto n = types_.at(ti);
+		n->eval();
 
 		double maxChdPrb = 0;
 		vector<string> mapDecompOpt;
-		for (auto& kv : n.chds_) {
+		for (auto& kv : n->chds_) {
 			auto di = kv.first;
-			PoonNode& c = n.chds_.at(di);
-			double m = (c.getLogVal() == c.ZERO_LOGVAL_) ? c.ZERO_LOGVAL_ : c.getLogVal + log(n.getChdCnt(di));
+			auto c = n->chds_.at(di);
+			double m = (c->getLogVal() == c->ZERO_LOGVAL_) ? c->ZERO_LOGVAL_ : c->getLogVal() + log(n->getChdCnt(di));
 
 			if (mapDecompOpt.empty() || m > maxChdPrb) {
 				mapDecompOpt.clear();
@@ -127,8 +129,8 @@ void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, std::share
 	// sum: choose a previous unused node
 	vector<int> blanks;
 	for (int i = 0; i<types_.size(); i++) {
-		PoonSumNode& n = types_.at(i);
-		if (n.chds_.size() == 0) {
+		auto n = types_.at(i);
+		if (n->chds_.size() == 0) {
 			blanks.push_back(i);
 		}
 	}
@@ -151,16 +153,16 @@ void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, std::share
 	for (int i = a1_ + interval_; i<a2_; i += interval_) {
 		int ri1 = getRegionId(a1_, i, b1_, b2_, params);
 		int ri2 = getRegionId(i, a2_, b1_, b2_, params);
-		PoonRegion r1 = getRegion(ri1, params);
-		PoonRegion r2 = getRegion(ri2, params);
-		PoonSumNode n1 = r1.types_.at(r1.defMapTypeIdx_);
-		PoonSumNode n2 = r2.types_.at(r2.defMapTypeIdx_);
+		PoonRegion& r1 = getRegion(ri1, params);
+		PoonRegion& r2 = getRegion(ri2, params);
+		auto n1 = r1.types_.at(r1.defMapTypeIdx_);
+		auto n2 = r2.types_.at(r2.defMapTypeIdx_);
 		double lp;
 
-		if (n1.getLogVal() == n1.ZERO_LOGVAL_ || n2.getLogVal() == n2.ZERO_LOGVAL_)
-			lp = n1.ZERO_LOGVAL_;
+		if (n1->getLogVal() == n1->ZERO_LOGVAL_ || n2->getLogVal() == n2->ZERO_LOGVAL_)
+			lp = n1->ZERO_LOGVAL_;
 		else
-			lp = n1.getLogVal() + n2.getLogVal();
+			lp = n1->getLogVal() + n2->getLogVal();
 
 		if (defMapDecompOpts.empty() || lp>defMapProdPrb_) {
 			defMapProdPrb_ = lp;
@@ -174,16 +176,16 @@ void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, std::share
 	for (int i = b1_ + interval_; i<b2_; i += interval_) {
 		int ri1 = getRegionId(a1_, a2_, b1_, i, params);
 		int ri2 = getRegionId(a1_, a2_, i, b2_, params);
-		PoonRegion r1 = getRegion(ri1, params);
-		PoonRegion r2 = getRegion(ri2, params);
+		PoonRegion& r1 = getRegion(ri1, params);
+		PoonRegion& r2 = getRegion(ri2, params);
 
-		PoonSumNode n1 = r1.types_.at(r1.defMapTypeIdx_);
-		PoonSumNode n2 = r2.types_.at(r2.defMapTypeIdx_);
+		auto n1 = r1.types_.at(r1.defMapTypeIdx_);
+		auto n2 = r2.types_.at(r2.defMapTypeIdx_);
 		double lp;
-		if (n1.getLogVal() == n1.ZERO_LOGVAL_ || n2.getLogVal() == n2.ZERO_LOGVAL_)
-			lp = n1.ZERO_LOGVAL_;
+		if (n1->getLogVal() == n1->ZERO_LOGVAL_ || n2->getLogVal() == n2->ZERO_LOGVAL_)
+			lp = n1->ZERO_LOGVAL_;
 		else
-			lp = n1.getLogVal() + n2.getLogVal();
+			lp = n1->getLogVal() + n2->getLogVal();
 
 		if (defMapDecompOpts.empty() || lp > defMapProdPrb_) {
 			defMapProdPrb_ = lp;
@@ -204,26 +206,26 @@ void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, std::share
 
 	// evaluate product nodes
 	for (auto& kv : decomp_prod_) {
-		PoonProdNode n = decomp_prod_.at(kv.first);  //could just kv.second.eval();
-		n.eval();
+		auto n = decomp_prod_.at(kv.first);  //could just kv.second.eval();
+		n->eval();
 	}
 
 	// evaluate existing sum nodes and children
 	vector<int> mapTypes;
 	for (int ti = 0; ti < types_.size(); ti++) {
-		if (types_.at(ti).chds_.size() == 0) 
+		if (types_.at(ti)->chds_.size() == 0) 
 			continue;
-		PoonSumNode n = types_.at(ti);
-		n.eval();
+		auto n = types_.at(ti);
+		n->eval();
 
 		double maxSumPrb = 0;
 		vector<string> mapDecompOpt;
 
-		for (auto& kv : n.chds_) {
+		for (auto& kv : n->chds_) {
 			string di = kv.first;
-			PoonNode& c = n.chds_.at(di);
-			double l = n.getLogVal() + log(n.cnt_);
-			double m = c.getLogVal();
+			auto c = n->chds_.at(di);
+			double l = n->getLogVal() + log(n->cnt_);
+			double m = c->getLogVal();
 			double nl;
 
 			if (l>m) {
@@ -242,10 +244,10 @@ void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, std::share
 			}
 		}
 
-		if (n.chds_.find(defMapDecomp) == n.chds_.end()) {
+		if (n->chds_.find(defMapDecomp) == n->chds_.end()) {
 			double nl = defMapProdPrb_;
-			if (n.getLogVal() != n.ZERO_LOGVAL_) {
-				nl = log(n.cnt_) + n.getLogVal();
+			if (n->getLogVal() != n->ZERO_LOGVAL_) {
+				nl = log(n->cnt_) + n->getLogVal();
 
 				if (defMapProdPrb_>nl) {
 					nl = defMapProdPrb_ + log(1 + exp(nl - defMapProdPrb_));
@@ -264,7 +266,7 @@ void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, std::share
 			}
 		}
 
-		n.setVal(maxSumPrb - log(n.cnt_ + 1));
+		n->setVal(maxSumPrb - log(n->cnt_ + 1));
 
 		// randomly break tie
 		std::default_random_engine generator;
@@ -274,30 +276,30 @@ void PoonRegion::inferMAPForLearning(int instIdx, PoonInstance& inst, std::share
 		mapDecomps_[ti] = mapDecompOpt.at(distribution(generator));
 		mapDecompOpt.clear();
 
-		if (mapTypes.empty() || n.getLogVal() > defMapSumPrb_) {
-			defMapSumPrb_ = n.getLogVal();
+		if (mapTypes.empty() || n->getLogVal() > defMapSumPrb_) {
+			defMapSumPrb_ = n->getLogVal();
 			mapTypes.clear();
 		}
-		if (n.getLogVal() == defMapSumPrb_) {
+		if (n->getLogVal() == defMapSumPrb_) {
 			mapTypes.push_back(ti);
 		}
 	}
 
 	if (chosenBlankIdx >= 0) {
-		PoonSumNode& n = types_.at(chosenBlankIdx);
-		n.setVal(defMapProdPrb_ - log(n.cnt_ + 1) - params->sparsePrior_);
+		auto n = types_.at(chosenBlankIdx);
+		n->setVal(defMapProdPrb_ - log(n->cnt_ + 1) - params->sparsePrior_);
 		mapDecomps_[chosenBlankIdx] = defMapDecomp;
 
-		if (mapTypes.empty() || n.getLogVal() > defMapSumPrb_) {
-			defMapSumPrb_ = n.getLogVal();
+		if (mapTypes.empty() || n->getLogVal() > defMapSumPrb_) {
+			defMapSumPrb_ = n->getLogVal();
 			mapTypes.clear(); mapTypes.push_back(chosenBlankIdx);
 		}
 	}
 
-	std::default_random_engine generator;
-	std::uniform_int_distribution<int> distribution(0, mapTypes.size());
+	std::default_random_engine generator2;
+	std::uniform_int_distribution<int> distribution2(0, mapTypes.size());
 
-	defMapTypeIdx_ = mapTypes.at(distribution(generator));
+	defMapTypeIdx_ = mapTypes.at(distribution2(generator2));
 	mapTypes.clear();
 }
 
@@ -334,10 +336,10 @@ void PoonRegion::setCurrParseToMAP(int instIdx, std::shared_ptr<PoonParameter> p
 
 	// if product node not created, create it now
 	if (decomp_prod_.find(di) == decomp_prod_.end()) {
-		PoonProdNode np;
+		auto np = make_shared<PoonProdNode>();
 		decomp_prod_[di] = np;
-		np.addChd(r1.types_.at(d.typeId1_));
-		np.addChd(r2.types_.at(d.typeId2_));
+		np->addChd(r1.types_.at(d.typeId1_));
+		np->addChd(r2.types_.at(d.typeId2_));
 	}
 
 	r1.setCurrParseToMAP(instIdx, params);
@@ -379,8 +381,8 @@ void PoonRegion::clearCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1
 		return;
 
 	string di = PoonDecomposition::getIdStr(ri1, ri2, ti1, ti2);
-	PoonSumNode n = types_.at(chosenType);
-	n.removeChdOnly(di, 1);
+	auto n = types_.at(chosenType);
+	n->removeChdOnly(di, 1);
 }
 
 void PoonRegion::setCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, int ti2, std::shared_ptr<PoonParameter> params) {
@@ -388,22 +390,22 @@ void PoonRegion::setCurrParseFromBuf(int chosenType, int ri1, int ri2, int ti1, 
 		return;
 
 	string di = PoonDecomposition::getIdStr(ri1, ri2, ti1, ti2);
-	PoonSumNode& n = types_.at(chosenType);
+	auto n = types_.at(chosenType);
 	PoonDecomposition& d = PoonDecomposition::getDecomposition(di);
 
 	// if prodnode not created, create it now
 	if (decomp_prod_.find(di) == decomp_prod_.end()) {
-		PoonProdNode np;
+		auto np = make_shared<PoonProdNode>();
 		decomp_prod_[di] =  np;
 		PoonRegion& r1 = PoonRegion::getRegion(d.regionId1_, params);
 		PoonRegion& r2 = PoonRegion::getRegion(d.regionId2_, params);
 
-		np.addChd(r1.types_.at(d.typeId1_));
-		np.addChd(r2.types_.at(d.typeId2_));
-		n.addChdOnly(di, 1, np);
+		np->addChd(r1.types_.at(d.typeId1_));
+		np->addChd(r2.types_.at(d.typeId2_));
+		n->addChdOnly(di, 1, np);
 	}
 	else{
-		PoonProdNode& np = decomp_prod_.at(di);
-		n.addChdOnly(di, 1, np);
+		auto np = decomp_prod_.at(di);
+		n->addChdOnly(di, 1, np);
 	}
 }

@@ -10,7 +10,7 @@ using namespace std;
 
 //For future, normalization should be a option for the data set
 //that way you can get the means and stds from the training set and use those
-void PoonDataset::setInstance(vector<vector<double> >& buf, PoonInstance inst){
+void PoonDataset::setInstance(vector<vector<double> >& buf, PoonInstance& inst){
 	double tf = 0;
 	double varf = 0;
 	int cf = 0;

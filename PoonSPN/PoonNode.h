@@ -1,11 +1,10 @@
-
+#ifndef POONNODE_H
+#define POONNODE_H
 
 #include <limits>  
 #include <math.h> 
 
-//an abstract node class
-class PoonNode
-{
+class PoonNode{
 public:
 	const double ZERO_LOGVAL_ = std::numeric_limits<double>::min(); //negative infinity
 protected:
@@ -16,7 +15,6 @@ public:
 	PoonNode(){
 		logDerivative_ = ZERO_LOGVAL_;
 	};
-	~PoonNode();
 
 	double getLogVal() { return logval_; }; //naming is bad getLogVal vs setVal
 	double getLogDerVal() { return logDerivative_; }; //naming is bad getLogVal vs setVal
@@ -37,3 +35,4 @@ public:
 	virtual void passDerivative() = 0;
 };
 
+#endif

@@ -1,5 +1,6 @@
 #include "ImagePGM.h"
 
+using namespace std;
 
 ImagePGM::ImagePGM(vector<vector <double> >& buff){
 	if(buff.size() < 1)

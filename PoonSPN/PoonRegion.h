@@ -1,8 +1,12 @@
+#ifndef POONREGION_H
+#define POONREGION_H
+
 #include <vector>
 #include <map>
 #include <string>
 #include <sstream>
 #include <cmath>
+#include <memory>
 
 #include "PoonProdNode.h"
 #include "PoonSumNode.h"
@@ -26,10 +30,10 @@ public:
 	// data structure for a parse
 	std::map<int, int> inst_type_;
 	std::map<int, std::string> inst_decomp_;
-	std::map<std::string, PoonProdNode> decomp_prod_;
+	std::map<std::string, std::shared_ptr<PoonProdNode> > decomp_prod_;
 
 	// each region is alloted a set of sum nodes
-	std::vector<PoonSumNode> types_;
+	std::vector<std::shared_ptr<PoonSumNode>> types_;
 
 	// for MAP computation
 	int defMapTypeIdx_;
@@ -86,6 +90,8 @@ public:
 			//
 			invar_ = other.invar_;
 		}
+
+		return *this;
 	}; 
 
 	PoonRegion(int id, int a1, int a2, int b1, int b2, std::shared_ptr<PoonParameter> params);
@@ -159,3 +165,4 @@ public:
 
 };
 
+#endif

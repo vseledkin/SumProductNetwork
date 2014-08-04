@@ -145,6 +145,9 @@ public:
 
 };
 
+
+
+
 //a class to turn the paramaters into a singletonesque class
 //the instance will stay alive as long as there is an instance of it alive somwhere.
 //This alows one to use it as singleton if they desire.
@@ -164,9 +167,13 @@ public:
 	}
 
 private:
-	static std::weak_ptr<Target> s_instance;
+	static std::weak_ptr<PoonParameter> s_instance;
 };
 
-template <typename PoonParameter> std::weak_ptr<PoonParameter> SharedPrams<PoonParameter>::s_instance;
+
+template <typename PoonParameter>
+std::weak_ptr<PoonParameter> SharedParams<PoonParameter>::s_instance;
+
+
 
 #endif

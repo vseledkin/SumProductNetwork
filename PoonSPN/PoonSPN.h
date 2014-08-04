@@ -1,8 +1,10 @@
-
+#ifndef POONSPN_H
+#define POONSPN_H
 
 #include <vector>
 #include <string>
 #include <set>
+#include <memory>
 
 #include "PoonParameter.h"
 #include "PoonInstance.h"
@@ -23,7 +25,7 @@ private:
 	bool completeByMarginal_ = true; // complete pixel by marginal
 
 	// root
-	PoonSumNode root_;
+	std::shared_ptr<PoonSumNode> root_;
 	PoonRegion rootRegion_;
 
 	// coarser resolution for larger regions
@@ -132,12 +134,8 @@ public:
 	// utils
 	// -------------------------------------------------------------- //
 	void printParams();
-}
-
-
-
-
-
-
 };
 
+
+
+#endif

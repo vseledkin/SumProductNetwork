@@ -1,22 +1,20 @@
 
 
 #include<vector>
+#include <memory>
 
 #include "PoonNode.h"
 
 class PoonProdNode : public PoonNode
 {
 public:
-	std::vector<PoonNode> chds_;
-
-	PoonProdNode();
-	~PoonProdNode();
+	std::vector<std::shared_ptr<PoonNode>> chds_;
 
 	void PoonProdNode::passDerivative();
 
 	void eval();
 
-	void addChd(PoonNode& n);
+	void addChd(std::shared_ptr<PoonNode> n);
 	
 
 

@@ -7,13 +7,13 @@
 int main(int argc, char* argv[])
 {
 
-	cout << "STARTING" << endl;
+	std::cout << "STARTING" << std::endl;
 
 	PoonRun run(argc, argv);
 
 
-	string sillyVisualStudios;
-	cin >> sillyVisualStudios;
+	std::string sillyVisualStudios;
+	std::cin >> sillyVisualStudios;
 	return 0;
 }
 

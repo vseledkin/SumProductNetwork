@@ -1,3 +1,5 @@
+#ifndef UTILS_H
+#define UTILS_H
 
 #include <iostream>
 #include <cstdio>
@@ -8,7 +10,7 @@
 
 
 //old poon funtions
-int getIntVal(PoonInstance& inst, double p) {
+static int getIntVal(PoonInstance& inst, double p) {
 	return (int)(p*inst.std_ + inst.mean_);
 };
 
@@ -21,4 +23,4 @@ static double addLog(double l1, double l2) {
 	}
 };
 
-
+#endif

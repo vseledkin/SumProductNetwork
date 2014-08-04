@@ -7,6 +7,8 @@
 
 using namespace std;
 
+bool PoonSPN::isRecordingUpdate_ = true;
+
 // ----------------------------------------------------------
 // Bottom
 // ----------------------------------------------------------
@@ -161,18 +163,18 @@ double PoonSPN::cmpMarginal(PoonRegion& r) {
 	double t = 0, d = 0;
 	double md = 100;
 
-	for (int i = 0; i<r.types_.size(); i++) {
-		PoonSumNode& n = r.types_.at(i);
-		if (n.getLogDerVal() == n.ZERO_LOGVAL_)
+	for (int i = 0; i < r.types_.size(); i++) {
+		auto n = r.types_.at(i);
+		if (n->getLogDerVal() == n->ZERO_LOGVAL_)
 			continue;
-		if (md == 100 || n.getLogDerVal() > md)
-			md = n.getLogDerVal();
+		if (md == 100 || n->getLogDerVal() > md)
+			md = n->getLogDerVal();
 	}
 	for (int i = 0; i < r.types_.size(); i++) {
-		PoonSumNode& n = r.types_.at(i);
-		if (n.getLogDerVal() == n.ZERO_LOGVAL_)
+		auto n = r.types_.at(i);
+		if (n->getLogDerVal() == n->ZERO_LOGVAL_)
 			continue;
-		double p = exp(n.getLogDerVal() - md);
+		double p = exp(n->getLogDerVal() - md);
 		d += r.means_[i] * p; t += p;
 	}
 	d /= t;
@@ -297,11 +299,11 @@ void PoonSPN::clearUnusedInSPN() {
 					PoonRegion& r = PoonRegion::getRegion(ri, params);
 
 					set<string> decomps;
-					for (PoonSumNode& n : r.types_) {
-						if (n.chds_.size() > 0) {
+					for (auto n : r.types_) {
+						if (n->chds_.size() > 0) {
 							double tc = 0;
-							for (auto& kv : n.chdCnts_) {
-								tc += n.chdCnts_.at(kv.first);  // could just be kv
+							for (auto& kv : n->chdCnts_) {
+								tc += n->chdCnts_.at(kv.first);  // could just be kv
 								decomps.insert(kv.first);
 							}
 						}
@@ -340,9 +342,9 @@ void PoonSPN::clearUnusedInSPN() {
 
 							// clear dead decomp_prod
 							set<string> decomps;
-							for (PoonSumNode& n : r.types_) {
-								if (n.chds_.size() > 0) {
-									for (auto& kv : n.chdCnts_) {
+							for (auto n : r.types_) {
+								if (n->chds_.size() > 0) {
+									for (auto& kv : n->chdCnts_) {
 										decomps.insert(kv.first);
 									}
 								}
@@ -374,11 +376,11 @@ void PoonSPN::clearUnusedInSPN() {
 void PoonSPN::cmpDerivative() {
 	initDerivative();
 
-	root_.setLogDerVal(0.0);
-	root_.passDerivative();
-	for (auto& kv : root_.chds_) {
-		PoonNode& n = root_.chds_.at(kv.first);
-		n.passDerivative();
+	root_->setLogDerVal(0.0);
+	root_->passDerivative();
+	for (auto& kv : root_->chds_) {
+		auto n = root_->chds_.at(kv.first);
+		n->passDerivative();
 	}
 
 	// coarsePoonRegion
@@ -425,21 +427,21 @@ void PoonSPN::cmpDerivative() {
 
 void PoonSPN::cmpDerivative(PoonRegion& r) {
 	for (int i = 0; i < r.types_.size(); i++) {
-		r.types_.at(i).passDerivative();
+		r.types_.at(i)->passDerivative();
 	}
 	for (auto& kv : r.decomp_prod_) {
-		PoonNode& n = r.decomp_prod_.at(kv.first);
-		n.passDerivative();
+		auto n = r.decomp_prod_.at(kv.first);
+		n->passDerivative();
 	}
 };
 
 void PoonSPN::initDerivative(PoonRegion& r) {
 	for (auto& kv : r.decomp_prod_) {
-		PoonProdNode& n = r.decomp_prod_.at(kv.first);
-		n.setLogDerVal(n.ZERO_LOGVAL_);
+		auto n = r.decomp_prod_.at(kv.first);
+		n->setLogDerVal(n->ZERO_LOGVAL_);
 	}
-	for (PoonSumNode& n : r.types_) {
-		n.setLogDerVal(n.ZERO_LOGVAL_);
+	for (auto n : r.types_) {
+		n->setLogDerVal(n->ZERO_LOGVAL_);
 	}
 };
 
@@ -529,14 +531,14 @@ void PoonSPN::eval() {
 
 void PoonSPN::eval(PoonRegion& r) {
 	for (auto& kv : r.decomp_prod_) {
-		PoonProdNode& n = r.decomp_prod_.at(kv.first);
-		n.eval();
+		auto n = r.decomp_prod_.at(kv.first);
+		n->eval();
 	}
-	for (PoonSumNode& n : r.types_) {
-		if (n.chds_.size() > 0)
-			n.eval();
+	for (auto n : r.types_) {
+		if (n->chds_.size() > 0)
+			n->eval();
 		else
-			n.setVal(n.ZERO_LOGVAL_);
+			n->setVal(n->ZERO_LOGVAL_);
 	}
 };
 
@@ -686,7 +688,7 @@ void PoonSPN::recvUpdate(int src) {
 double PoonSPN::llh(PoonInstance& inst) {
 	setInput(inst);
 	eval();
-	return root_.getLogVal();
+	return root_->getLogVal();
 };
 
 // set dspn input
@@ -710,7 +712,7 @@ void PoonSPN::setInputOccludeLeftHalf(PoonInstance& inst) {
 			int ri = PoonRegion::getRegionId(a1, a2, b1, b2, params);
 			PoonRegion& r = PoonRegion::getRegion(ri, params);
 			if (b1 < params->inputDim2_ / 2) //r.setBase(0,0);	// log 1,1
-				r.setBaseForSumOut();
+				r.setBaseForSumOut(params);
 			else
 				r.setBase(inst.vals_[a1][b1]);
 		}
@@ -747,17 +749,17 @@ void PoonSPN::addChd(PoonRegion r, PoonSumNode n, string di, double cc) {
 
 
 		PoonDecomposition d = PoonDecomposition::getDecomposition(di);
-		PoonProdNode np;
+		auto np = make_shared<PoonProdNode>();
 		r.decomp_prod_[di] = np;
 		PoonRegion& r1 = PoonRegion::getRegion(d.regionId1_, params);
 		PoonRegion& r2 = PoonRegion::getRegion(d.regionId2_, params);
 
-		np.addChd(r1.types_.at(d.typeId1_));
-		np.addChd(r2.types_.at(d.typeId2_));
+		np->addChd(r1.types_.at(d.typeId1_));
+		np->addChd(r2.types_.at(d.typeId2_));
 		n.chds_[di] = np;
 	}
 	else{
-		PoonProdNode& np = r.decomp_prod_.at(di);
+		auto np = r.decomp_prod_.at(di);
 		n.chds_[di] = np;
 	}
 

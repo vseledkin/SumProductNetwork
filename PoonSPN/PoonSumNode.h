@@ -1,14 +1,17 @@
-#pragma once
+#ifndef POONSUMNODE_H
+#define POONSUMNODE_H
+
 #include "PoonNode.h"
 #include "PoonParameter.h"
+
 #include <map>
 #include <string>
+#include <memory>
 
-class PoonSumNode : public PoonNode
-{
+class PoonSumNode : public PoonNode{
 public:
-	std::map<string, PoonNode> chds_;
-	std::map<string, double> chdCnts_;
+	std::map<std::string, std::shared_ptr<PoonNode>> chds_;
+	std::map<std::string, double> chdCnts_;
 	double cnt_;
 
 	PoonSumNode(std::shared_ptr<PoonParameter> param) {
@@ -21,22 +24,29 @@ public:
 		cnt_ = params->smoothSumCnt_;
 	};
 
+	/*
+	PoonSumNode(PoonSumNode&& other){ //move constructor'
+		chds_(other.chds_.begin(), other.chds_.end());
+		chdCnts_(other.chdCnts_);
+
+	};*/
+
 	void eval();
 
 	void passDerivative();
 
-	double getChdCnt(string di) {
+	double getChdCnt(std::string di) {
 		return chdCnts_.at(di);
 	}
 
-	void setChdCnt(string di, double cnt){
+	void setChdCnt(std::string di, double cnt){
 		chdCnts_[di] = cnt;
 	}
 
-	void removeChdOnly(string decompIdx, double cnt);
+	void removeChdOnly(std::string decompIdx, double cnt);
 
-	void PoonSumNode::addChdOnly(string decompIdx, double cnt, PoonNode& n);
+	void addChdOnly(std::string decompIdx, double cnt, std::shared_ptr<PoonNode> n);
 
-	void PoonSumNode::removeChdOnly(string decompIdx, double cnt);
 };
 
+#endif

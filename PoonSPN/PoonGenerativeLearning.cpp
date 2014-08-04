@@ -5,8 +5,6 @@ using namespace std;
 
 
 
-
-
 void PoonGenerativeLearning::learnHardEM(vector<PoonInstance> train){
 
 	//long startTime = System.currentTimeMillis();
@@ -131,12 +129,13 @@ void PoonGenerativeLearning::learnHardEM(vector<PoonInstance> train){
 			llh += spn_.llh(inst);
 		}
 
-		if (iter == 1)
+		if (iter == 1){
 			ollh = llh;
+		}
 		else {
 			double dllh = abs(llh - ollh);
 			ollh = llh;
-			if (dllh < params->thresholdLLHChg_) {
+			if (dllh < params->thresholdLLHChg_)
 				cout << "llh converged" << endl;
 		}
 

@@ -11,7 +11,7 @@ void PoonSumNode::eval() {
 	double maxl = 0;
 	for (auto& kv : chds_) { //c++11 key value pairs
 		string i = kv.first;
-		double l = kv.second.getLogVal();
+		double l = kv.second->getLogVal();
 		if (l != this->ZERO_LOGVAL_){
 			if (maxi.empty() || maxl < l) {
 				maxi = i; 
@@ -27,7 +27,7 @@ void PoonSumNode::eval() {
 		string i = kv.first;
 		if (chdCnts_.find(i) == chdCnts_.end())
 			continue;
-		double l = l = kv.second.getLogVal();
+		double l = l = kv.second->getLogVal();
 		if (l == this->ZERO_LOGVAL_) 
 			continue;
 		v += getChdCnt(i)*exp(l - maxl);
@@ -41,16 +41,16 @@ void PoonSumNode::passDerivative() {
 
 	for (auto& kv : chds_) {
 		string di = kv.first;
-		PoonNode& n = kv.second;
+		auto n = kv.second;
 		double l = logDerivative_ + log(getChdCnt(di) / cnt_);
-		if (n.getLogDerVal() == this->ZERO_LOGVAL_)
-			n.setLogDerVal(l);
+		if (n->getLogDerVal() == this->ZERO_LOGVAL_)
+			n->setLogDerVal(l);
 		else
-			n.setLogDerVal(addLog(l, n.getLogVal()));
+			n->setLogDerVal(addLog(l, n->getLogVal()));
 	}
 }
 
-void PoonSumNode::addChdOnly(string decompIdx, double cnt, PoonNode& n) {
+void PoonSumNode::addChdOnly(string decompIdx, double cnt, shared_ptr<PoonNode> n) {
 	if (chds_.find(decompIdx) == chds_.end()) {
 		chds_[decompIdx] = n;
 	}

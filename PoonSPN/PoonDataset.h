@@ -12,7 +12,7 @@
 class PoonDataset{
 public:
 
-	std::vector<vector<int> > tmp_;  // buffer for proc imgs 
+	std::vector<std::vector<int> > tmp_;  // buffer for proc imgs 
 	std::shared_ptr<PoonParameter> params;
 
 	// data
@@ -47,10 +47,10 @@ public:
 
 private:
 	
-	void setInstance(std::vector<std::vector<double> >& buf, PoonInstance inst);
+	void setInstance(std::vector<std::vector<double> >& buf, PoonInstance& inst);
 
 	//silly function, should have randomized options and be more robust
-	void genTestIdx(int maxSize, int testSize, set<int>& tis) {
+	void genTestIdx(int maxSize, int testSize, std::set<int>& tis) {
 		for (int i = maxSize - testSize; i<maxSize; i++) {
 			tis.insert(i); if (tis.size() == testSize) break;
 		}

@@ -1,3 +1,6 @@
+#ifndef POONDECOMPOSITION_H
+#define POONDECOMPOSITION_H
+
 #include <map>
 #include <string>
 #include <sstream>
@@ -72,3 +75,4 @@ public:
 	}
 };
 
+#endif

@@ -13,17 +13,23 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Poon">
-      <UniqueIdentifier>{8f80ec7b-212a-4875-8fbc-36dfb2e3092d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Poon">
-      <UniqueIdentifier>{4578d66c-b6be-4a43-9ada-608214f9dc88}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Util">
       <UniqueIdentifier>{dae1f405-55e4-4114-af86-29148eadf90b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Util">
       <UniqueIdentifier>{d83d84f4-81de-44bf-8063-6d483f5201a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Arvie SPN">
+      <UniqueIdentifier>{5b9adb47-0bcd-4055-8abd-061a06ddaa74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Poon SPN">
+      <UniqueIdentifier>{8f80ec7b-212a-4875-8fbc-36dfb2e3092d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Arvie SPN">
+      <UniqueIdentifier>{07a8a04a-8cb8-4eac-82f2-98939607a9de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Poon SPN">
+      <UniqueIdentifier>{4578d66c-b6be-4a43-9ada-608214f9dc88}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,81 +37,81 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PoonRun.h">
-      <Filter>Header Files\Poon</Filter>
+      <Filter>Header Files\Poon SPN</Filter>
     </ClInclude>
     <ClInclude Include="PoonParameter.h">
-      <Filter>Header Files\Poon</Filter>
+      <Filter>Header Files\Poon SPN</Filter>
     </ClInclude>
     <ClInclude Include="PoonDataset.h">
-      <Filter>Header Files\Poon</Filter>
-    </ClInclude>
-    <ClInclude Include="ImagePGM.h">
-      <Filter>Header Files\Util</Filter>
+      <Filter>Header Files\Poon SPN</Filter>
     </ClInclude>
     <ClInclude Include="PoonSPN.h">
-      <Filter>Header Files\Poon</Filter>
+      <Filter>Header Files\Poon SPN</Filter>
     </ClInclude>
     <ClInclude Include="PoonInstance.h">
-      <Filter>Header Files\Poon</Filter>
+      <Filter>Header Files\Poon SPN</Filter>
     </ClInclude>
     <ClInclude Include="PoonNode.h">
-      <Filter>Header Files\Poon</Filter>
+      <Filter>Header Files\Poon SPN</Filter>
     </ClInclude>
     <ClInclude Include="PoonProdNode.h">
-      <Filter>Header Files\Poon</Filter>
+      <Filter>Header Files\Poon SPN</Filter>
     </ClInclude>
     <ClInclude Include="PoonRegion.h">
-      <Filter>Header Files\Poon</Filter>
+      <Filter>Header Files\Poon SPN</Filter>
     </ClInclude>
     <ClInclude Include="PoonSumNode.h">
-      <Filter>Header Files\Poon</Filter>
+      <Filter>Header Files\Poon SPN</Filter>
     </ClInclude>
     <ClInclude Include="PoonDecomposition.h">
-      <Filter>Header Files\Poon</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>Header Files\Util</Filter>
+      <Filter>Header Files\Poon SPN</Filter>
     </ClInclude>
     <ClInclude Include="PoonGenerativeLearning.h">
-      <Filter>Header Files\Poon</Filter>
+      <Filter>Header Files\Poon SPN</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\ImagePGM.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Utils.h">
+      <Filter>Header Files\Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PoonRun.cpp">
-      <Filter>Source Files\Poon</Filter>
+      <Filter>Source Files\Poon SPN</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PoonDataset.cpp">
-      <Filter>Source Files\Poon</Filter>
-    </ClCompile>
-    <ClCompile Include="ImagePGM.cpp">
-      <Filter>Source Files\Util</Filter>
+      <Filter>Source Files\Poon SPN</Filter>
     </ClCompile>
     <ClCompile Include="PoonSPN.cpp">
-      <Filter>Source Files\Poon</Filter>
+      <Filter>Source Files\Poon SPN</Filter>
     </ClCompile>
     <ClCompile Include="PoonRegion.cpp">
-      <Filter>Source Files\Poon</Filter>
+      <Filter>Source Files\Poon SPN</Filter>
     </ClCompile>
     <ClCompile Include="PoonProdNode.cpp">
-      <Filter>Source Files\Poon</Filter>
+      <Filter>Source Files\Poon SPN</Filter>
     </ClCompile>
     <ClCompile Include="PoonNode.cpp">
-      <Filter>Source Files\Poon</Filter>
+      <Filter>Source Files\Poon SPN</Filter>
     </ClCompile>
     <ClCompile Include="PoonSumNode.cpp">
-      <Filter>Source Files\Poon</Filter>
+      <Filter>Source Files\Poon SPN</Filter>
     </ClCompile>
     <ClCompile Include="PoonDecomposition.cpp">
-      <Filter>Source Files\Poon</Filter>
+      <Filter>Source Files\Poon SPN</Filter>
     </ClCompile>
     <ClCompile Include="PoonParameter.cpp">
-      <Filter>Source Files\Poon</Filter>
+      <Filter>Source Files\Poon SPN</Filter>
     </ClCompile>
     <ClCompile Include="PoonGenerativeLearning.cpp">
-      <Filter>Source Files\Poon</Filter>
+      <Filter>Source Files\Poon SPN</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\ImagePGM.cpp">
+      <Filter>Source Files\Util</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

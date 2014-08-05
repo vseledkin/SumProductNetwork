@@ -86,7 +86,7 @@ public:
 		inputDim2_ = 64;
 		baseResolution_ = 4;
 		smoothSumCnt_ = 0.01;
-		numComponentsPerVar_ = 4;
+		numComponentsPerVar_ = 4; //number of mixture components per variable
 
 		// Eval
 		maxTestSize_ = 50;

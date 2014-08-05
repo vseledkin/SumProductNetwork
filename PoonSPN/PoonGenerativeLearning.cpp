@@ -10,8 +10,10 @@ void PoonGenerativeLearning::learnHardEM(vector<PoonInstance> train){
 	//long startTime = System.currentTimeMillis();
 	bool isLog = false;
 
-	spn_.printParams();
+	//spn_.printParams();
+	cout << "Initializing SPN" << endl;
 	spn_.init();
+	cout << "Initializing SPN done" << endl;
 	//Utils.logTimeMS("init");
 
 	return;

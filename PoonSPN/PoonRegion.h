@@ -47,14 +47,7 @@ public:
 
 	static std::map<int, PoonRegion> id_regions_;
 
-	// NOTE: dimension limited by range of 32-bit integer to around 215
-	// for larger dimension, use long for id, or switch to string
-	static int getRegionId(int a1, int a2, int b1, int b2, std::shared_ptr<PoonParameter> params) {
-		int id = ((a1*params->inputDim1_ + a2 - 1)*params->inputDim2_ + b1)*params->inputDim2_ + b2 - 1;
-		if (id_regions_.find(id) == id_regions_.end())
-			id_regions_[id] = PoonRegion(id, a1, a2, b1, b2, params);
-		return id;
-	}
+
 
 	PoonRegion(){}; //default construc
 	
@@ -64,7 +57,7 @@ public:
 			id_ = other.id_;
 			a1_ = other.a1_;
 			a2_ = other.a2_;
-			b1_ = other.b2_;
+			b1_ = other.b1_;
 			b2_ = other.b2_;
 			a_ = other.a_;
 			b_ = other.b_;	// a=a2-a1, b=b2-b1	
@@ -103,7 +96,7 @@ public:
 			id_ = other.id_;
 			a1_ = other.a1_;
 			a2_ = other.a2_;
-			b1_ = other.b2_;
+			b1_ = other.b1_;
 			b2_ = other.b2_;
 			a_ = other.a_;
 			b_ = other.b_;	// a=a2-a1, b=b2-b1	
@@ -138,22 +131,29 @@ public:
 
 	PoonRegion(int id, int a1, int a2, int b1, int b2, std::shared_ptr<PoonParameter> params);
 
-
-
+	// NOTE: dimension limited by range of 32-bit integer to around 215
+	// for larger dimension, use long for id, or switch to string
+	static int getRegionId(int a1, int a2, int b1, int b2, std::shared_ptr<PoonParameter> params) {
+		int id = ((a1*params->inputDim1_ + a2 - 1) * params->inputDim2_ + b1) * params->inputDim2_ + b2 - 1;
+		if (id_regions_.find(id) == id_regions_.end()){
+			id_regions_[id] = PoonRegion(id, a1, a2, b1, b2, params);
+			//std::cout << "new region" << std::endl;
+		}
+		return id;
+	}
 
 	static PoonRegion& getRegion(int id, std::shared_ptr<PoonParameter> params) {
 		
 		if (id_regions_.find(id) == id_regions_.end()) {
-			//std::cout << "not found" << std::endl;
+			std::cout << "not found" << std::endl;
 			int b2 = id % params->inputDim2_ + 1;
 			int x = id / params->inputDim2_;
 			int b1 = x % params->inputDim2_;
 			x = x / params->inputDim2_;
 			int a2 = x % params->inputDim1_ + 1;
 			int a1 = x / params->inputDim1_;
-			auto r = getRegion(getRegionId(a1, a2, b1, b2, params), params);  //this might now work, check, weird recussion
-			return r;
-			
+			return getRegion(getRegionId(a1, a2, b1, b2, params), params);  //this might now work, check, weird recussion
+
 		}else{
 			//std::cout << "found" << std::endl;
 			return id_regions_.at(id);

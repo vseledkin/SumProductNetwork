@@ -202,37 +202,47 @@ void PoonSPN::setMAPLeftToBuf(int instIdx, PoonInstance& inst) {
 // ----------------------------------------------------------
 // Learning
 // ----------------------------------------------------------
+
+
 void PoonSPN::init() {
-	// coarsePoonRegion
-	for (int ca = 1; ca <= coarseDim1_; ca++){
+	
+	/* coarsePoonRegion
+	This takes the original rectangular data array and decompes it so that each new region
+	is formed for every sub -ectangular region using a step size of params->baseResolution_.
+	This includes making the root of the SPN, which is the full rectangualr region (region covering the whole grid).
+
+	A region spans from (a1, b1) to (a2, b2).
+	*/
+	for (int ca = 1; ca <= coarseDim1_; ca++){  //for each course dimension rectangle, coarseDim1_ = dim/resolution i.e 64/4 = 16 
 		for (int cb = 1; cb <= coarseDim2_; cb++) {
 			if (ca == 1 && cb == 1) 
 				continue;	// taken care of below in fine
 
 			for (int a1 = 0; a1 <= params->inputDim1_ - ca * params->baseResolution_; a1 += params->baseResolution_) {
 				int a2 = a1 + ca * params->baseResolution_;
-				for (int b1 = 0; b1 <= params->inputDim2_ - cb*params->baseResolution_; b1 += params->baseResolution_) {
+				for (int b1 = 0; b1 <= params->inputDim2_ - cb * params->baseResolution_; b1 += params->baseResolution_) {
 					int b2 = b1 + cb * params->baseResolution_;
 					//cout << "loop " << b1 << endl;
 					// coarsePoonRegions
 					int ri = PoonRegion::getRegionId(a1, a2, b1, b2, params);
 					PoonRegion& r = PoonRegion::getRegion(ri, params);
 
+					bool debug = false;
+					if (debug){
+						cout << "Region Inner Loop" << endl;
+						cout << "a1 " << a1 << endl;
+						cout << "a2 " << a2 << endl;
+						cout << "b1 " << b1 << endl;
+						cout << "b2 " << b2 << endl;
+						cout << "ca " << ca << endl;
+						cout << "cb " << cb << endl << endl;
+					}
 
-
-					//cout << PoonRegion::id_regions_[ri].invar_ << endl;
-					//cout << r.invar_ << endl;
-
-					//cout << r.types_.empty() << endl;
-					//cout << r.inst_type_.empty() << endl;
-
-					if (ca == coarseDim1_ && cb == coarseDim2_) {
-						r.resetTypes(1, params);	// one sum node as root						
+					if (ca == coarseDim1_ && cb == coarseDim2_) {  //setting up the root which is the region covering the whole grid
+						r.resetTypes(1, params);	// one sum node as root, hence the 1 instea of params->numSumPerRegion_						
 						rootRegion_ = r;
 						root_ = r.types_.at(0);
-					}
-					else{
-						//cout << r.id_ << " " << ri << endl;
+					}else{
 						r.resetTypes(params->numSumPerRegion_, params);
 					}
 				}
@@ -249,12 +259,42 @@ void PoonSPN::init() {
 						int a2 = a1 + a;
 						for (int b1 = cb*params->baseResolution_; b1 <= (cb + 1)*params->baseResolution_ - b; b1++) {
 							int b2 = b1 + b;
+
+							bool debug = false;
+							if (debug){
+								cout << "Fine region Inner Loop" << endl;
+								cout << "a1 " << a1 << endl;
+								cout << "a2 " << a2 << endl;
+								cout << "b1 " << b1 << endl;
+								cout << "b2 " << b2 << endl;
+								cout << "ca " << ca << endl;
+								cout << "cb " << cb << endl;
+								cout << "a " << a << endl;
+								cout << "b " << a << endl;
+								
+							} 
+
+
 							int ri = PoonRegion::getRegionId(a1, a2, b1, b2, params);
-							PoonRegion r = PoonRegion::getRegion(ri, params);
+							auto& r = PoonRegion::getRegion(ri, params);
+
+
+							if (debug){
+								cout << "Fine region Inner Loop" << endl;
+								cout << "ri " << ri << endl;
+								cout << "r.ri " << r.id_ << endl;
+								cout << "ra1 " << r.a1_ << endl;
+								cout << "ra2 " << r.a2_ << endl;
+								cout << "rb1 " << r.b1_ << endl;
+								cout << "rb2 " << r.b2_ << endl << endl;
+
+							}
+
 							if (a == 1 && b == 1) {
 								initUnitRegion(r);
+							}else{
+								r.resetTypes(params->numSumPerRegion_, params);
 							}
-							else r.resetTypes(params->numSumPerRegion_, params);
 						}
 					}
 				}
@@ -264,7 +304,6 @@ void PoonSPN::init() {
 };
 
 // init: set mean/variance by equal quantiles from training for each pixel
-//why is this not part of a constructor for region?
 void PoonSPN::initUnitRegion(PoonRegion& r) {
 	r.resetTypes(params->numComponentsPerVar_, params);
 
@@ -277,7 +316,9 @@ void PoonSPN::initUnitRegion(PoonRegion& r) {
 
 
 	int ttlCnt = trainingSet_.size();
-	int cnt = (int)ceil(ttlCnt*1.0 / params->numComponentsPerVar_);
+
+	//because each region has numComponentsPerVar_ sum nodes, they get over counted numComponentsPerVar_ times
+	int cnt = (int)ceil((float)ttlCnt/(float)params->numComponentsPerVar_); 
 
 	vector<double> vals(ttlCnt, 0.0);
 	for (int ii = 0; ii < trainingSet_.size(); ii++) {

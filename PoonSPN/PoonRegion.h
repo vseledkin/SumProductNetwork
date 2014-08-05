@@ -7,6 +7,7 @@
 #include <sstream>
 #include <cmath>
 #include <memory>
+#include <iostream>
 
 #include "PoonProdNode.h"
 #include "PoonSumNode.h"
@@ -42,7 +43,7 @@ public:
 	double defMapProdPrb_;
 
 	//
-	double invar_ = sqrt(20);
+	double  invar_;
 
 	static std::map<int, PoonRegion> id_regions_;
 
@@ -56,6 +57,47 @@ public:
 	}
 
 	PoonRegion(){}; //default construc
+	
+	
+	PoonRegion& PoonRegion::operator=(PoonRegion& other){  //copy operator
+		if (this != &other){
+			id_ = other.id_;
+			a1_ = other.a1_;
+			a2_ = other.a2_;
+			b1_ = other.b2_;
+			b2_ = other.b2_;
+			a_ = other.a_;
+			b_ = other.b_;	// a=a2-a1, b=b2-b1	
+			interval_ = other.interval_;	// for coarse resolution	
+
+			// for pixel region only: gaussian units
+			means_ = other.means_;
+			vars_ = other.vars_;
+			cnts_ = other.cnts_;
+			ttlCnt_ = other.ttlCnt_;
+
+			// data structure for a parse
+			inst_type_ = other.inst_type_;
+			inst_decomp_ = other.inst_decomp_;
+			decomp_prod_ = other.decomp_prod_;
+
+			// each region is alloted a set of sum nodes
+			types_ = other.types_;
+
+			// for MAP computation
+			defMapTypeIdx_ = other.defMapTypeIdx_;
+			mapDecomps_ = other.mapDecomps_;
+			defMapSumPrb_ = other.defMapSumPrb_;
+			defMapProdPrb_ = other.defMapProdPrb_;
+
+			//
+			invar_ = other.invar_;
+		}
+
+		return *this;
+	};
+
+
 	PoonRegion& PoonRegion::operator=(PoonRegion&& other){  //move operator, c++11
 		if (this != &other){
 			id_ = other.id_;
@@ -92,7 +134,7 @@ public:
 		}
 
 		return *this;
-	}; 
+	};
 
 	PoonRegion(int id, int a1, int a2, int b1, int b2, std::shared_ptr<PoonParameter> params);
 
@@ -101,21 +143,21 @@ public:
 
 	static PoonRegion& getRegion(int id, std::shared_ptr<PoonParameter> params) {
 		
-		PoonRegion r;
 		if (id_regions_.find(id) == id_regions_.end()) {
-
+			//std::cout << "not found" << std::endl;
 			int b2 = id % params->inputDim2_ + 1;
 			int x = id / params->inputDim2_;
 			int b1 = x % params->inputDim2_;
 			x = x / params->inputDim2_;
 			int a2 = x % params->inputDim1_ + 1;
 			int a1 = x / params->inputDim1_;
-			r = getRegion(getRegionId(a1, a2, b1, b2, params), params);  //this might now work, check, weird recussion
+			auto r = getRegion(getRegionId(a1, a2, b1, b2, params), params);  //this might now work, check, weird recussion
+			return r;
+			
+		}else{
+			//std::cout << "found" << std::endl;
+			return id_regions_.at(id);
 		}
-		else{
-			r = id_regions_.at(id);
-		}
-		return r;
 	}
 
 	int getId() { return id_; }

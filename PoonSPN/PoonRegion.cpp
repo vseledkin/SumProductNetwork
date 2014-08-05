@@ -14,7 +14,9 @@ PoonRegion::PoonRegion(int id, int a1, int a2, int b1, int b2, std::shared_ptr<P
 	id_ = id;
 	a1_ = a1;	a2_ = a2;
 	b1_ = b1;	b2_ = b2;
-	a_ = a2_ - a1_; b_ = b2_ - b1_;
+	a_ = a2_ - a1_;
+	b_ = b2_ - b1_;
+	invar_ = sqrt(20);
 
 	if (a_  > params->baseResolution_ || b_ > params->baseResolution_) {
 		if (a_ % params->baseResolution_ != 0 || b_ % params->baseResolution_ != 0) {
@@ -32,13 +34,21 @@ PoonRegion::PoonRegion(int id, int a1, int a2, int b1, int b2, std::shared_ptr<P
 // initialization
 void PoonRegion::resetTypes(int numTypes, std::shared_ptr<PoonParameter> params) {
 	// clean up
-	types_.clear();
-	inst_type_.clear();
-	inst_decomp_.clear();
-	decomp_prod_.clear();
-	mapDecomps_.clear();
+
+	//cout << "here1" << endl;
+	//cout << types_.empty() << endl;
+	this->types_.clear();
+
+	//cout << "here2" << endl;
+	this->inst_type_.clear();
+
+	//cout << "here3" << endl;
+	this->inst_decomp_.clear();
+	this->decomp_prod_.clear();
+	this->mapDecomps_.clear();
+	//cout << "here4" << endl;
 	for (int i = 0; i< numTypes; i++) {
-		types_.push_back(make_shared<PoonSumNode>(params));
+		this->types_.push_back(make_shared<PoonSumNode>(params));
 	}
 }
 

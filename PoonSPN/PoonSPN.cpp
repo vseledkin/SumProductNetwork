@@ -206,22 +206,35 @@ void PoonSPN::init() {
 	// coarsePoonRegion
 	for (int ca = 1; ca <= coarseDim1_; ca++){
 		for (int cb = 1; cb <= coarseDim2_; cb++) {
-			if (ca == 1 && cb == 1) continue;	// taken care of below in fine
+			if (ca == 1 && cb == 1) 
+				continue;	// taken care of below in fine
 
-			for (int a1 = 0; a1 <= params->inputDim1_ - ca*params->baseResolution_; a1 += params->baseResolution_) {
-				int a2 = a1 + ca*params->baseResolution_;
+			for (int a1 = 0; a1 <= params->inputDim1_ - ca * params->baseResolution_; a1 += params->baseResolution_) {
+				int a2 = a1 + ca * params->baseResolution_;
 				for (int b1 = 0; b1 <= params->inputDim2_ - cb*params->baseResolution_; b1 += params->baseResolution_) {
-					int b2 = b1 + cb*params->baseResolution_;
-
+					int b2 = b1 + cb * params->baseResolution_;
+					//cout << "loop " << b1 << endl;
 					// coarsePoonRegions
 					int ri = PoonRegion::getRegionId(a1, a2, b1, b2, params);
 					PoonRegion& r = PoonRegion::getRegion(ri, params);
+
+
+
+					//cout << PoonRegion::id_regions_[ri].invar_ << endl;
+					//cout << r.invar_ << endl;
+
+					//cout << r.types_.empty() << endl;
+					//cout << r.inst_type_.empty() << endl;
+
 					if (ca == coarseDim1_ && cb == coarseDim2_) {
 						r.resetTypes(1, params);	// one sum node as root						
 						rootRegion_ = r;
 						root_ = r.types_.at(0);
 					}
-					else r.resetTypes(params->numSumPerRegion_, params);
+					else{
+						//cout << r.id_ << " " << ri << endl;
+						r.resetTypes(params->numSumPerRegion_, params);
+					}
 				}
 			}
 		}

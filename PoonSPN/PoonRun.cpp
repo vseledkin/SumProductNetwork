@@ -2,6 +2,7 @@
 #include "PoonRun.h"
 #include "PoonParameter.h"
 #include "PoonDataset.h"
+#include "PoonGenerativeLearning.h"
 #include "Utils/ImagePGM.h"
 
 #include <sstream> 
@@ -34,12 +35,12 @@ void PoonRun::runCaltech(std::shared_ptr<PoonParameter>Params){
 }
 
 
-void PoonRun::runOlivetti(std::shared_ptr<PoonParameter> Params){
+void PoonRun::runOlivetti(std::shared_ptr<PoonParameter> params){
 	
-	bool debug = true;
+	bool debug = false;
 
 	//reading in data set
-	PoonDataset data(Params);
+	PoonDataset data(params);
 	data.loadOlivetti();
 
 	if (debug){
@@ -56,19 +57,17 @@ void PoonRun::runOlivetti(std::shared_ptr<PoonParameter> Params){
 	}
 	
 
-	/*
+	
 	// learn
-	GenerativeLearning l = new GenerativeLearning();
-	l.learn(data.getTrain());
-	SPN dspn = l.getDSPN();
-	if (MyMPI.myOffset_ == 0) {
-		dspn.saveDSPN(oliveMdlDir_ + "/olive");
-	}
+	PoonGenerativeLearning l;
+	l.learn(data.getTrain(), params);
+	PoonSPN dspn = l.getDSPN();
+
 
 	// complete
-	ImageCompletion.completeLeft(dspn, data.getTest(), "olive", oliveRstDir_);
-	ImageCompletion.completeBottom(dspn, data.getTest(), "olive", oliveRstDir_);
-	*/
+	//ImageCompletion.completeLeft(dspn, data.getTest(), "olive", oliveRstDir_);
+	//ImageCompletion.completeBottom(dspn, data.getTest(), "olive", oliveRstDir_);
+	
 	cout << "Done, runOlivetti!" << endl;
 }
 

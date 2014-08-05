@@ -1,4 +1,5 @@
-
+#ifndef POONPRODNODE_H
+#define POONPRODNODE_H
 
 #include<vector>
 #include <memory>
@@ -15,8 +16,7 @@ public:
 	void eval();
 
 	void addChd(std::shared_ptr<PoonNode> n);
-	
-
 
 };
 
+#endif

@@ -14,6 +14,8 @@ void PoonGenerativeLearning::learnHardEM(vector<PoonInstance> train){
 	spn_.init();
 	//Utils.logTimeMS("init");
 
+	return;
+
 	// -------------------------------------------------- //
 	// -- process each mini-batch, find map, update weights
 	// -------------------------------------------------- //		

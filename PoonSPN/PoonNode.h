@@ -33,6 +33,8 @@ public:
 
 	// propagate derivative to children
 	virtual void passDerivative() = 0;
+
+	~PoonNode(){};
 };
 
 #endif
